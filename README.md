@@ -5,7 +5,7 @@ data in json format<br/>
 return json<br/>
 
 Add new:<br/>
-	>add new user:<br/>
+	> add new user:<br/>
 		input data:<br/>
 			method: "POST"<br/>
 			url: https://us-central1-challengeup-49057.cloudfunctions.net/add_user<br>
