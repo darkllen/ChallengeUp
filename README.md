@@ -1,11 +1,11 @@
 # ChallengeUp API
 
-realized with HTTP requests
+realized with HTTP requests<br/>
 data in json format
 return json
 
 Add new:
-	*add new user:
+* add new user:
 		**input data:
 			method: "POST"
 			url: https://us-central1-challengeup-49057.cloudfunctions.net/add_user
