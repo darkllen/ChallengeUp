@@ -1,4 +1,4 @@
-# ChallengeUp API
+# ChallengeUp API<br>
 
 realized with HTTP requests
 data in json format
