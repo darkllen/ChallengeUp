@@ -4,6 +4,7 @@ realized with HTTP requests<br/>
 data in json format<br/>
 return json
 
+#### add new
 [add new user](#add_new_user)<br/>
 [add new challenge](#add_new_challenge)
 
