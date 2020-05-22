@@ -4,6 +4,11 @@ realized with HTTP requests<br/>
 data in json format<br/>
 return json
 
+[Custom foo description](#foo)
+
+
+
+
 Add new:<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;add new user:<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;input data:<br/>
@@ -37,3 +42,4 @@ Add new:<br/>
         		"id": id_of_created_user<br/>
     		}<br/>
 
+# Foo
