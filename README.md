@@ -1,6 +1,6 @@
 # ChallengeUp API
 
-realized with HTTP requests<br>
+realized with HTTP requests<br/>
 data in json format<br>
 return json<br>
 
