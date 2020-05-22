@@ -9,18 +9,18 @@ return json
 
 ## add_new_user
 **input data:**<br/>
-&nbsp;method: "POST"<br/>
-&nbsp;url: https://us-central1-challengeup-49057.cloudfunctions.net/add_user<br/>
-&nbsp;data: {<br/>
-&nbsp;&nbsp;"name":"name",<br/>
-&nbsp;&nbsp;"email":"email"<br/>
-&nbsp;}<br/>
+&nbsp;&nbsp;**method:** "POST"<br/>
+&nbsp;&nbsp;**url:** https://us-central1-challengeup-49057.cloudfunctions.net/add_user<br/>
+&nbsp;&nbsp;**data:** {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"name":"name",<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"email":"email"<br/>
+&nbsp;&nbsp;}<br/>
 **return:**<br/>
-&nbsp;response = {<br/>
-&nbsp;&nbsp;"status": 200,<br/>
-&nbsp;&nbsp;"message": "user created",<br/>
-&nbsp;&nbsp;"id": id_of_created_user<br/>
-&nbsp;}<br/>
+&nbsp;&nbsp;**response:** {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"status": 200,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"message": "user created",<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;"id": id_of_created_user<br/>
+&nbsp;&nbsp;}<br/>
 
 
 add new challenge:<br/>
