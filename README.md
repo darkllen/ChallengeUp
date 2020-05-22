@@ -7,7 +7,7 @@ return json
 [add new user](#add_new_user)
 
 
-##### add_new_user
+## add_new_user
 **input data:**<br/>
 &nbsp;method: "POST"<br/>
 &nbsp;url: https://us-central1-challengeup-49057.cloudfunctions.net/add_user<br/>
