@@ -1,7 +1,6 @@
-# Environments
-venv/Include
-venv/Lib
-venv/Scripts
-venv/pyvenv.cfg
-venv/cred.env
+DB_Controller/Include
+DB_Controller/Lib
+DB_Controller/Scripts
+DB_Controller/pyvenv.cfg
+DB_Controller/cred.env
 .idea
