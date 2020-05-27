@@ -112,6 +112,7 @@ ENV/
 env.bak/
 venv.bak/
 venv/pyvenv.cfg
+venv/cred.env
 
 # Spyder project settings
 .spyderproject
