@@ -1,6 +1,7 @@
 DB_Controller/Include
 DB_Controller/Lib
 DB_Controller/Scripts
+DB_Controller/.idea
 DB_Controller/pyvenv.cfg
 DB_Controller/cred.env
 
