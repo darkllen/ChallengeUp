@@ -109,25 +109,31 @@ def add_comment():
     fb = firebase_admin.initialize_app(cred, {'databaseURL': 'https://challengeup-49057.firebaseio.com'})
 
     # get all info from request
-    name = request.get_json(silent=True)['name']
-    email = request.get_json(silent=True)['email']
+    user_id = request.get_json(silent=True)['user_id']
+    challenge_id = request.get_json(silent=True)['challenge_id']
+    likes = 0
+    date = request.get_json(silent=True)['date']
+    reply_on_id = request.get_json(silent=True)['reply_on_id']
 
     # get reference to users table
-    users_ref = db.reference('').child('users')
+    comments_ref = db.reference('').child('comments')
 
     # insert new
-    new_user = users_ref.push({
-        'name': name,
-        'email': email
+    new_comment = comments_ref.push({
+        'user_id': user_id,
+        'challenge_id': challenge_id,
+        "likes":likes,
+        "date":date,
+        "reply_on_id":reply_on_id
 
     })
-    id = new_user.key
+    id = new_comment.key
 
     firebase_admin.delete_app(fb)
 
     response = {
         "status": 200,
-        "message": "user created",
+        "message": "comment created",
         "id": id
     }
     return jsonify(response)

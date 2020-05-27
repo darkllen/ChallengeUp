@@ -3,7 +3,6 @@ DB_Controller/Lib
 DB_Controller/Scripts
 DB_Controller/pyvenv.cfg
 DB_Controller/cred.env
-.idea
 
 DB_Model/*
 !DB_Model/src
