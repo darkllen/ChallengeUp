@@ -1,8 +1,10 @@
 import requests
 
 data_user = {
-    "name":"aaaaa",
-    "email":"asd"
+    "tag":"aaaaa",
+    "nick":"asd",
+    "email":"asd",
+    "password":"pass",
 }
 data_challenge =  {
     "name":"aaaaa",
@@ -25,7 +27,7 @@ data_id_user = {
 }
 
 data_id_challenge = {
-    "challenge_id":"-M8KPrggu4VAPxV-9yxL"
+    "challenge_id":"-s-9yxL"
 }
 
 
@@ -71,6 +73,10 @@ update_comment = "http://127.0.0.1:5000/update_comment"
 
 #r = requests.post(get_challenge_by_id, json=data_id_challenge)
 
-r = requests.get(get_challenge_by_id_site, params=data_id_challenge)
+f = {
+    "user_id":"-M8RyaVoyGniv5sXTJ1W"
+}
+
+r = requests.get("http://127.0.0.1:5000/get_subscribers", params=f)
 
 print(r.json())

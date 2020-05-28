@@ -8,51 +8,157 @@ import java.util.Iterator;
 
 public class User {
     private String id;
-    private String name;
+    private String tag;
+    private String nick;
     private String email;
+    private String password;
 
-    public User(String name, String email) {
-        this.name = name;
+    private ArrayList<String> categories;
+    private ArrayList<String> subscriptions;
+    private ArrayList<String> undone;
+    private ArrayList<String> done;
+
+
+
+    public User(String tag, String nick, String email, String password) {
+        this.tag = tag;
+        this.nick = nick;
         this.email = email;
+        this.password = password;
+
+        undone = new ArrayList<>();
+        done = new ArrayList<>();
+        categories = new ArrayList<>();
         id = null;
     }
 
-    private void setId(String id){
-        this.id = id;
+    public User(String tag, String nick, String email, String password, ArrayList<String> categories) {
+        this(tag, nick, email, password);
+        this.categories = categories;
     }
 
-    public String getId() {
-        return id;
+    public void addChallengeToDone(Challenge challenge){
+        done.add(challenge.getId());
+    }
+    public void addChallengeToUndone(Challenge challenge){
+        undone.add(challenge.getId());
     }
 
-    public String getName() {
-        return name;
+    public ArrayList<Challenge> getDoneChallenges(){
+        ArrayList<Challenge> challenges = new ArrayList<>();
+        for (String s:done) {
+            challenges.add(Challenge.getChallengeById(s));
+        }
+        return challenges;
     }
 
-    public String getEmail() {
-        return email;
+    public ArrayList<User> getSubscriptionsAsUsers(){
+        ArrayList<User> users = new ArrayList<>();
+        for (String s:subscriptions) {
+            users.add(User.getUserById(s));
+        }
+        return users;
+    }
+    public ArrayList<User> getSubscribersAsUsers(){
+        try {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/get_subscribers?user_id="+id)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            String resStr = response.body().string();
+
+            JSONObject object = new JSONObject(resStr);
+            object = new JSONObject(object.getString("users"));
+
+            ArrayList<User> users = new ArrayList<>();
+            for (Iterator<String> it = object.keys(); it.hasNext(); ) {
+                String key = it.next();
+
+                ArrayList<String> undoneArray = new ArrayList<>();
+                ArrayList<String> doneArray = new ArrayList<>();
+                ArrayList<String> categoriesArray = new ArrayList<>();
+                ArrayList<String> subscriptionsArray = new ArrayList<>();
+
+                try{
+                    JSONObject subscriptions = object.getJSONObject(key).getJSONObject("subscriptions");
+                    for (Iterator<String> it2 = subscriptions.keys(); it2.hasNext(); ) {
+                        String n = it2.next();
+                        undoneArray.add(subscriptions.getString(n));
+                    }
+                } catch (JSONException ignored){}
+
+
+                try{
+                    JSONObject categories = object.getJSONObject(key).getJSONObject("categories");
+                    for (Iterator<String> it2 = categories.keys(); it2.hasNext(); ) {
+                        String n = it2.next();
+                        undoneArray.add(categories.getString(n));
+                    }
+                } catch (JSONException ignored){}
+
+                try{
+                    JSONObject undone = object.getJSONObject(key).getJSONObject("undone");
+                    for (Iterator<String> it2 = undone.keys(); it2.hasNext(); ) {
+                        String n = it2.next();
+                        undoneArray.add(undone.getString(n));
+                    }
+                } catch (JSONException ignored){}
+
+                try {
+                    JSONObject done = object.getJSONObject(key).getJSONObject("done");
+                    for (Iterator<String> it2 = done.keys(); it2.hasNext(); ) {
+                        String n = it2.next();
+                        doneArray.add(done.getString(n));
+                    }
+                }catch (JSONException ignored){}
+
+                User user = new User(object.getJSONObject(key).getString("tag"),
+                        object.getJSONObject(key).getString("nick"),
+                        object.getJSONObject(key).getString("email"),
+                        object.getJSONObject(key).getString("password"),
+                        categoriesArray);
+                user.setId(key);
+                user.setDone(doneArray);
+                user.setUndone(undoneArray);
+                user.setSubscriptions(subscriptionsArray);
+
+                users.add(user);
+
+
+            }
+            return users;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public ArrayList<Challenge> getUnDoneChallenges(){
+        ArrayList<Challenge> challenges = new ArrayList<>();
+        for (String s:undone) {
+            challenges.add(Challenge.getChallengeById(s));
+        }
+        return challenges;
     }
 
     public static String addNewUser(User user){
-        String id = addNewUser(user.name, user.email);
+        String id = addNewUser(user.tag, user.nick, user.email, user.password, user.categories);
         user.setId(id);
-       return id;
+        return id;
     }
-    public static String addNewUser(String name, String email){
+    public static String addNewUser(String tag, String nick, String email, String password, ArrayList<String> categories){
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
             JSONObject jsonObject = new JSONObject()
-                    .put("name", name)
-                    .put("email", email);
+                    .put("tag", tag)
+                    .put("email", email)
+                    .put("nick", nick)
+                    .put("password", password)
+                    .put("categories", categories);
 
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
@@ -87,14 +193,232 @@ public class User {
             ArrayList<User> users = new ArrayList<>();
             for (Iterator<String> it = object.keys(); it.hasNext(); ) {
                 String key = it.next();
-                User user = new User(object.getJSONObject(key).getString("name"), object.getJSONObject(key).getString("email"));
+
+                ArrayList<String> undoneArray = new ArrayList<>();
+                ArrayList<String> doneArray = new ArrayList<>();
+                ArrayList<String> categoriesArray = new ArrayList<>();
+                ArrayList<String> subscriptionsArray = new ArrayList<>();
+
+                try{
+                    JSONObject subscriptions = object.getJSONObject(key).getJSONObject("subscriptions");
+                    for (Iterator<String> it2 = subscriptions.keys(); it2.hasNext(); ) {
+                        String n = it2.next();
+                        undoneArray.add(subscriptions.getString(n));
+                    }
+                } catch (JSONException ignored){}
+
+
+                try{
+                    JSONObject categories = object.getJSONObject(key).getJSONObject("categories");
+                    for (Iterator<String> it2 = categories.keys(); it2.hasNext(); ) {
+                        String n = it2.next();
+                        undoneArray.add(categories.getString(n));
+                    }
+                } catch (JSONException ignored){}
+
+                try{
+                    JSONObject undone = object.getJSONObject(key).getJSONObject("undone");
+                    for (Iterator<String> it2 = undone.keys(); it2.hasNext(); ) {
+                        String n = it2.next();
+                        undoneArray.add(undone.getString(n));
+                    }
+                } catch (JSONException ignored){}
+
+                try {
+                    JSONObject done = object.getJSONObject(key).getJSONObject("done");
+                    for (Iterator<String> it2 = done.keys(); it2.hasNext(); ) {
+                        String n = it2.next();
+                        doneArray.add(done.getString(n));
+                    }
+                }catch (JSONException ignored){}
+
+                User user = new User(object.getJSONObject(key).getString("tag"),
+                        object.getJSONObject(key).getString("nick"),
+                        object.getJSONObject(key).getString("email"),
+                        object.getJSONObject(key).getString("password"),
+                        categoriesArray);
                 user.setId(key);
+                user.setDone(doneArray);
+                user.setUndone(undoneArray);
+                user.setSubscriptions(subscriptionsArray);
+
                 users.add(user);
+
+
             }
             return users;
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
         return null;
+    }
+    public static User getUserById(String id){
+        try {
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/get_user_by_id?user_id="+id)
+                    .get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            String resStr = response.body().string();
+            JSONObject object = new JSONObject(resStr);
+            object = new JSONObject(object.getString("user"));
+
+            ArrayList<String> undoneArray = new ArrayList<>();
+            ArrayList<String> doneArray = new ArrayList<>();
+            ArrayList<String> categoriesArray = new ArrayList<>();
+            ArrayList<String> subscriptionsArray = new ArrayList<>();
+
+            try{
+                JSONObject subscriptions = object.getJSONObject(id).getJSONObject("subscriptions");
+                for (Iterator<String> it2 = subscriptions.keys(); it2.hasNext(); ) {
+                    String n = it2.next();
+                    undoneArray.add(subscriptions.getString(n));
+                }
+            } catch (JSONException ignored){}
+
+
+            try{
+                JSONObject categories = object.getJSONObject(id).getJSONObject("categories");
+                for (Iterator<String> it2 = categories.keys(); it2.hasNext(); ) {
+                    String n = it2.next();
+                    undoneArray.add(categories.getString(n));
+                }
+            } catch (JSONException ignored){}
+
+            try{
+                JSONObject undone = object.getJSONObject(id).getJSONObject("undone");
+                for (Iterator<String> it2 = undone.keys(); it2.hasNext(); ) {
+                    String n = it2.next();
+                    undoneArray.add(undone.getString(n));
+                }
+            } catch (JSONException ignored){}
+
+            try {
+                JSONObject done = object.getJSONObject(id).getJSONObject("done");
+                for (Iterator<String> it2 = done.keys(); it2.hasNext(); ) {
+                    String n = it2.next();
+                    doneArray.add(done.getString(n));
+                }
+            }catch (JSONException ignored){}
+
+                User user = new User(object.getJSONObject(id).getString("tag"),
+                        object.getJSONObject(id).getString("nick"),
+                        object.getJSONObject(id).getString("email"),
+                        object.getJSONObject(id).getString("password"),
+                        categoriesArray);
+                user.setId(id);
+                user.setUndone(undoneArray);
+                user.setDone(doneArray);
+                user.setSubscriptions(subscriptionsArray);
+
+            return user;
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public void update(){
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        try {
+            JSONObject jsonObject = new JSONObject()
+                    .put("user_id", id)
+                    .put("tag", tag)
+                    .put("email", email)
+                    .put("nick", nick)
+                    .put("password", password)
+                    .put("done", done)
+                    .put("undone", undone)
+                    .put("categories", categories)
+                    .put("subscriptions", subscriptions);
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+
+            Request request = new Request.Builder()
+                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/update_user")
+                    .post(body)
+                    .build();
+
+            client.newCall(request).execute();
+
+        } catch (JSONException  | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void setId(String id){
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public String getNick() {
+        return nick;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public ArrayList<String> getUndone() {
+        return undone;
+    }
+
+    public void setUndone(ArrayList<String> undone) {
+        this.undone = undone;
+    }
+
+    public ArrayList<String> getDone() {
+        return done;
+    }
+
+    public void setDone(ArrayList<String> done) {
+        this.done = done;
+    }
+
+    public ArrayList<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(ArrayList<String> categories) {
+        this.categories = categories;
+    }
+
+    public ArrayList<String> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(ArrayList<String> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 }

@@ -22,16 +22,20 @@ def add_user():
     fb = firebase_admin.initialize_app(cred, {'databaseURL': 'https://challengeup-49057.firebaseio.com'})
 
     # get all info from request
-    name = request.get_json(silent=True)['name']
+    tag = request.get_json(silent=True)['tag']
+    nick = request.get_json(silent=True)['nick']
     email = request.get_json(silent=True)['email']
+    password = request.get_json(silent=True)['password']
 
     # get reference to users table
     users_ref = db.reference('').child('users')
 
     # insert new
     new_user = users_ref.push({
-        'name': name,
-        'email': email
+        "tag": tag,
+        "nick": nick,
+        "email": email,
+        "password": password,
 
     })
     id = new_user.key
@@ -120,8 +124,11 @@ def update_user():
     fb = firebase_admin.initialize_app(cred, {'databaseURL': 'https://challengeup-49057.firebaseio.com'})
 
     user_id = request.get_json(silent=True)['user_id']
-    name = request.get_json(silent=True)['name']
+    # get all info from request
+    tag = request.get_json(silent=True)['tag']
+    nick = request.get_json(silent=True)['nick']
     email = request.get_json(silent=True)['email']
+    password = request.get_json(silent=True)['password']
     # get reference to users table
     users_ref = db.reference('').child('users')
 
@@ -129,8 +136,10 @@ def update_user():
     # insert new
     new_user = users_ref.update({
         user_id: {
-            'name':name,
-            'email':email
+            "tag": tag,
+            "nick": nick,
+            "email": email,
+            "password": password,
         }
     })
 
@@ -165,6 +174,7 @@ def add_challenge():
     name = request.get_json(silent=True)['name']
     task = request.get_json(silent=True)['task']
     likes = 0
+    times_viewed = 0
     list_of_tags = request.get_json(silent=True)['tags']
     list_of_categories = request.get_json(silent=True)['categories']
     creator_id = request.get_json(silent=True)['creator_id']
@@ -176,6 +186,7 @@ def add_challenge():
         'name': name,
         'task': task,
         'likes':0,
+        'times_viewed':0,
         'tags':list_of_tags,
         'categories':list_of_categories,
         'creator_id':creator_id
@@ -213,7 +224,7 @@ def get_all_challenges():
     response = {
         "status": 200,
         "message": "ok",
-        "users": challenges_ref.get()
+        "challenges": challenges_ref.get()
     }
     firebase_admin.delete_app(fb)
     return jsonify(response)
@@ -242,7 +253,7 @@ def get_challenge_by_id():
     response = {
         "status": 200,
         "message": "ok",
-        "user": challenges_ref.order_by_key().equal_to(challenge_id).get()
+        "challenge": challenges_ref.order_by_key().equal_to(challenge_id).get()
     }
     firebase_admin.delete_app(fb)
     return jsonify(response)
@@ -269,6 +280,7 @@ def update_challenge():
     name = request.get_json(silent=True)['name']
     task = request.get_json(silent=True)['task']
     likes = request.get_json(silent=True)['likes']
+    times_viewed = request.get_json(silent=True)['times_viewed']
     list_of_tags = request.get_json(silent=True)['tags']
     list_of_categories = request.get_json(silent=True)['categories']
     creator_id = request.get_json(silent=True)['creator_id']
@@ -283,6 +295,7 @@ def update_challenge():
             'name': name,
             'task': task,
             'likes': likes,
+            'times_viewed':times_viewed,
             'tags': list_of_tags,
             'categories': list_of_categories,
             'creator_id': creator_id
@@ -369,7 +382,7 @@ def get_all_comments():
     response = {
         "status": 200,
         "message": "ok",
-        "users": comments_ref.get()
+        "comments": comments_ref.get()
     }
     firebase_admin.delete_app(fb)
     return jsonify(response)
@@ -398,7 +411,7 @@ def get_comment_by_id():
     response = {
         "status": 200,
         "message": "ok",
-        "user": comments_ref.order_by_key().equal_to(comment_id).get()
+        "comment": comments_ref.order_by_key().equal_to(comment_id).get()
     }
     firebase_admin.delete_app(fb)
     return jsonify(response)
@@ -450,5 +463,37 @@ def update_comment():
         "message": "comment updated",
     }
     return jsonify(response)
+
+@app.route("/get_subscribers", methods = ['GET'])
+def get_subscribers():
+   # imports
+    import firebase_admin
+    import json
+    import os
+    from firebase_admin import db
+    from firebase_admin import credentials
+    from flask import jsonify
+    # init firebase app
+
+    from dotenv import load_dotenv
+    dotenv_path = os.path.dirname(__file__) + "/cred.env"
+    load_dotenv(dotenv_path)
+    cred = credentials.Certificate(json.loads(os.getenv("FIREBASE_CRED")))
+    fb = firebase_admin.initialize_app(cred, {'databaseURL': 'https://challengeup-49057.firebaseio.com'})
+
+    user_id = request.args.get("user_id")
+    # get reference to users table
+
+    users_ref = db.reference('').child("users")
+
+    print (users_ref.order_by_child('email').get())
+    response = {
+        "status": 200,
+        "message": "user created",
+        "users": users_ref.order_by_child('subscriptions').equal_to(user_id).get()
+    }
+    firebase_admin.delete_app(fb)
+    return jsonify(response)
+
 
 app.run()
