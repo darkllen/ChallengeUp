@@ -4,12 +4,10 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
+        ArrayList<String> ca = new ArrayList<>();
+        ca.add("everyday");
+        System.out.println(Challenge.getChallengeById("-M8SD_ZaVEGBJ_JfW6Ab").getCategories());
 
-       String id3 = "-M8RycNDfRhYBCjcOF9a";
-       User user = User.getUserById(id3);
 
-       ArrayList<User> users = user.getSubscribersAsUsers();
-
-       System.out.println("s");
     }
 }

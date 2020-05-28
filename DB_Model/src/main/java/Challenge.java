@@ -1,4 +1,5 @@
 import okhttp3.*;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -97,20 +98,14 @@ public class Challenge {
                 ArrayList<String> categoriesArray = new ArrayList<>();
 
                 try{
-                    JSONObject tags = object.getJSONObject(key).getJSONObject("tags");
-                    for (Iterator<String> it2 = tags.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        tagsArray.add(tags.getString(n));
-                    }
+                    JSONArray tags = object.getJSONObject(key).getJSONArray("tags");
+                    for (int i = 0; i< tags.length(); ++i)tagsArray.add((String) tags.get(i));
                 } catch (JSONException ignored){}
 
 
                 try {
-                    JSONObject categories = object.getJSONObject(key).getJSONObject("categories");
-                    for (Iterator<String> it2 = categories.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        categoriesArray.add(categories.getString(n));
-                    }
+                    JSONArray categories = object.getJSONObject(key).getJSONArray("categories");
+                    for (int i = 0; i< categories.length(); ++i)categoriesArray.add((String) categories.get(i));
                 }catch (JSONException ignored){}
 
 
@@ -145,23 +140,16 @@ public class Challenge {
 
             ArrayList<String> tagsArray = new ArrayList<>();
             ArrayList<String> categoriesArray = new ArrayList<>();
-
             try{
-                JSONObject tags = object.getJSONObject(id).getJSONObject("tags");
-                for (Iterator<String> it2 = tags.keys(); it2.hasNext(); ) {
-                    String n = it2.next();
-                    tagsArray.add(tags.getString(n));
-                }
+                JSONArray tags = object.getJSONObject(id).getJSONArray("tags");
+                for (int i = 0; i< tags.length(); ++i)tagsArray.add((String) tags.get(i));
             } catch (JSONException ignored){}
 
-            try {
-                JSONObject categories = object.getJSONObject(id).getJSONObject("tags");
-                for (Iterator<String> it2 = categories.keys(); it2.hasNext(); ) {
-                    String n = it2.next();
-                    categoriesArray.add(categories.getString(n));
-                }
-            }catch (JSONException ignored){}
 
+            try {
+                JSONArray categories = object.getJSONObject(id).getJSONArray("categories");
+                for (int i = 0; i< categories.length(); ++i)categoriesArray.add((String) categories.get(i));
+            }catch (JSONException ignored){}
 
             Challenge challenge = new Challenge(object.getJSONObject(id).getString("name"),
                     object.getJSONObject(id).getString("task"),

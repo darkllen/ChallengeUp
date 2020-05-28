@@ -1,10 +1,12 @@
 import okhttp3.*;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class User {
     private String id;
@@ -60,79 +62,9 @@ public class User {
         return users;
     }
     public ArrayList<User> getSubscribersAsUsers(){
-        try {
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/get_subscribers?user_id="+id)
-                    .get()
-                    .build();
-            Response response = client.newCall(request).execute();
-            String resStr = response.body().string();
-
-            JSONObject object = new JSONObject(resStr);
-            object = new JSONObject(object.getString("users"));
-
-            ArrayList<User> users = new ArrayList<>();
-            for (Iterator<String> it = object.keys(); it.hasNext(); ) {
-                String key = it.next();
-
-                ArrayList<String> undoneArray = new ArrayList<>();
-                ArrayList<String> doneArray = new ArrayList<>();
-                ArrayList<String> categoriesArray = new ArrayList<>();
-                ArrayList<String> subscriptionsArray = new ArrayList<>();
-
-                try{
-                    JSONObject subscriptions = object.getJSONObject(key).getJSONObject("subscriptions");
-                    for (Iterator<String> it2 = subscriptions.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        undoneArray.add(subscriptions.getString(n));
-                    }
-                } catch (JSONException ignored){}
-
-
-                try{
-                    JSONObject categories = object.getJSONObject(key).getJSONObject("categories");
-                    for (Iterator<String> it2 = categories.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        undoneArray.add(categories.getString(n));
-                    }
-                } catch (JSONException ignored){}
-
-                try{
-                    JSONObject undone = object.getJSONObject(key).getJSONObject("undone");
-                    for (Iterator<String> it2 = undone.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        undoneArray.add(undone.getString(n));
-                    }
-                } catch (JSONException ignored){}
-
-                try {
-                    JSONObject done = object.getJSONObject(key).getJSONObject("done");
-                    for (Iterator<String> it2 = done.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        doneArray.add(done.getString(n));
-                    }
-                }catch (JSONException ignored){}
-
-                User user = new User(object.getJSONObject(key).getString("tag"),
-                        object.getJSONObject(key).getString("nick"),
-                        object.getJSONObject(key).getString("email"),
-                        object.getJSONObject(key).getString("password"),
-                        categoriesArray);
-                user.setId(key);
-                user.setDone(doneArray);
-                user.setUndone(undoneArray);
-                user.setSubscriptions(subscriptionsArray);
-
-                users.add(user);
-
-
-            }
-            return users;
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+       ArrayList<User> users = getAllUsers();
+       ArrayList<User> a = (ArrayList<User>) users.stream().filter(x->x.getSubscriptions().contains(id)).collect(Collectors.toList());
+       return a;
     }
 
 
@@ -200,36 +132,24 @@ public class User {
                 ArrayList<String> subscriptionsArray = new ArrayList<>();
 
                 try{
-                    JSONObject subscriptions = object.getJSONObject(key).getJSONObject("subscriptions");
-                    for (Iterator<String> it2 = subscriptions.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        undoneArray.add(subscriptions.getString(n));
-                    }
+                    JSONArray subscriptions = object.getJSONObject(key).getJSONArray("subscriptions");
+                    for (int i = 0; i< subscriptions.length(); ++i)subscriptionsArray.add((String) subscriptions.get(i));
                 } catch (JSONException ignored){}
 
 
                 try{
-                    JSONObject categories = object.getJSONObject(key).getJSONObject("categories");
-                    for (Iterator<String> it2 = categories.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        undoneArray.add(categories.getString(n));
-                    }
+                    JSONArray categories = object.getJSONObject(key).getJSONArray("categories");
+                    for (int i = 0; i< categories.length(); ++i)categoriesArray.add((String) categories.get(i));
                 } catch (JSONException ignored){}
 
                 try{
-                    JSONObject undone = object.getJSONObject(key).getJSONObject("undone");
-                    for (Iterator<String> it2 = undone.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        undoneArray.add(undone.getString(n));
-                    }
+                    JSONArray undone = object.getJSONObject(key).getJSONArray("undone");
+                    for (int i = 0; i< undone.length(); ++i)undoneArray.add((String) undone.get(i));
                 } catch (JSONException ignored){}
 
                 try {
-                    JSONObject done = object.getJSONObject(key).getJSONObject("done");
-                    for (Iterator<String> it2 = done.keys(); it2.hasNext(); ) {
-                        String n = it2.next();
-                        doneArray.add(done.getString(n));
-                    }
+                    JSONArray done = object.getJSONObject(key).getJSONArray("done");
+                    for (int i = 0; i< done.length(); ++i)doneArray.add((String) done.get(i));
                 }catch (JSONException ignored){}
 
                 User user = new User(object.getJSONObject(key).getString("tag"),
@@ -271,36 +191,24 @@ public class User {
             ArrayList<String> subscriptionsArray = new ArrayList<>();
 
             try{
-                JSONObject subscriptions = object.getJSONObject(id).getJSONObject("subscriptions");
-                for (Iterator<String> it2 = subscriptions.keys(); it2.hasNext(); ) {
-                    String n = it2.next();
-                    undoneArray.add(subscriptions.getString(n));
-                }
+                JSONArray subscriptions = object.getJSONObject(id).getJSONArray("subscriptions");
+                for (int i = 0; i< subscriptions.length(); ++i)subscriptionsArray.add((String) subscriptions.get(i));
             } catch (JSONException ignored){}
 
 
             try{
-                JSONObject categories = object.getJSONObject(id).getJSONObject("categories");
-                for (Iterator<String> it2 = categories.keys(); it2.hasNext(); ) {
-                    String n = it2.next();
-                    undoneArray.add(categories.getString(n));
-                }
+                JSONArray categories = object.getJSONObject(id).getJSONArray("categories");
+                for (int i = 0; i< categories.length(); ++i)categoriesArray.add((String) categories.get(i));
             } catch (JSONException ignored){}
 
             try{
-                JSONObject undone = object.getJSONObject(id).getJSONObject("undone");
-                for (Iterator<String> it2 = undone.keys(); it2.hasNext(); ) {
-                    String n = it2.next();
-                    undoneArray.add(undone.getString(n));
-                }
+                JSONArray undone = object.getJSONObject(id).getJSONArray("undone");
+                for (int i = 0; i< undone.length(); ++i)undoneArray.add((String) undone.get(i));
             } catch (JSONException ignored){}
 
             try {
-                JSONObject done = object.getJSONObject(id).getJSONObject("done");
-                for (Iterator<String> it2 = done.keys(); it2.hasNext(); ) {
-                    String n = it2.next();
-                    doneArray.add(done.getString(n));
-                }
+                JSONArray done = object.getJSONObject(id).getJSONArray("done");
+                for (int i = 0; i< done.length(); ++i)doneArray.add((String) done.get(i));
             }catch (JSONException ignored){}
 
                 User user = new User(object.getJSONObject(id).getString("tag"),
