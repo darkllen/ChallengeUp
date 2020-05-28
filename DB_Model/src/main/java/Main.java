@@ -9,7 +9,8 @@ public class Main {
         ArrayList<String> b =new ArrayList<>();
        // b.add("q");
         //b.add("t");
-       System.out.println(Challenge.addNewChallenge("aa","sx", "-adsdas", a, b));
-
+     //  System.out.println(Challenge.addNewChallenge("aa","sx", "-adsdas", a, b));
+        ArrayList<User> users = User.getAllUsers();
+        System.out.println(users.size());
     }
 }
