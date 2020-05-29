@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Challenge {
-    String id;
+    private String id;
     private String name;
     private String task;
     private String creator_id;
@@ -183,9 +183,8 @@ public class Challenge {
 
             return challenge;
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public void update(){
@@ -239,6 +238,7 @@ public class Challenge {
     public ArrayList<String> getCategories() {
         return categories;
     }
+
     public void setName(String name) {
         this.name = name;
     }

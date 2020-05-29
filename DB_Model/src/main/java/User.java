@@ -256,9 +256,8 @@ public class User {
 
             return user;
         } catch (IOException | JSONException e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     public void update(){
@@ -291,11 +290,6 @@ public class User {
     }
 
 
-
-
-    private void setId(String id){
-        this.id = id;
-    }
     public String getId() {
         return id;
     }
@@ -311,6 +305,22 @@ public class User {
     public String getPassword() {
         return password;
     }
+    public ArrayList<String> getUndone() {
+        return undone;
+    }
+    public ArrayList<String> getDone() {
+        return done;
+    }
+    public ArrayList<String> getCategories() {
+        return categories;
+    }
+    public ArrayList<String> getSubscriptions() {
+        return subscriptions;
+    }
+
+    private void setId(String id){
+        this.id = id;
+    }
     public void setTag(String tag) {
         this.tag = tag;
     }
@@ -323,26 +333,14 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-    public ArrayList<String> getUndone() {
-        return undone;
-    }
     public void setUndone(ArrayList<String> undone) {
         this.undone = undone;
-    }
-    public ArrayList<String> getDone() {
-        return done;
     }
     public void setDone(ArrayList<String> done) {
         this.done = done;
     }
-    public ArrayList<String> getCategories() {
-        return categories;
-    }
     public void setCategories(ArrayList<String> categories) {
         this.categories = categories;
-    }
-    public ArrayList<String> getSubscriptions() {
-        return subscriptions;
     }
     public void setSubscriptions(ArrayList<String> subscriptions) {
         this.subscriptions = subscriptions;
