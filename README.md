@@ -6,17 +6,29 @@
 
 # Java_API
 
-classes:<br/>
-[User](#User)
-[Challenge](#Challenge)
-[Utilities](#Utilities)
+**classes:**<br/>
+[User](#User)<br/>
+[Challenge](#Challenge)<br/>
+[Utilities](#Utilities)<br/>
 
 ### User
-saddsa
+**Constructors:** <br/>
+Constructor | Description
+**Static methods:** <br/>
+Return | Method | Description
+**Methods** <br/>
+Return | Method | Description
+
 ### Challenge
-dsa
+**Constructors:** <br/>
+Constructor | Description
+**Static methods:** <br/>
+Return | Method | Description
+**Methods** <br/>
+Return | Method | Description
 ### Utilities
-dsad
+**Static methods:** <br/>
+Return | Method | Description
 
 # Cloud_Functions
 
