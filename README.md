@@ -15,7 +15,9 @@
 **Constructors:** <br/>
 Constructor | Description
 -------------|-------------
-
+User(String tag, String nick, String email, String password) | create User, id == null until addNewUser(User user) is used
+User(String tag, String nick, String email, String password, ArrayList<String> categories) | create User, id == null until addNewUser(User user) is used
+  
 **Static methods:** <br/>
 
 Return | Method | Description
