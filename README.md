@@ -1,8 +1,12 @@
 # ChallengeUp API
 
-## [Cloud Functions](#Cloud_Functions)
 
 ## [Java API](#Java_API)
+## [Cloud Functions](#Cloud_Functions)
+
+
+# Java_API
+asd
 
 
 # Cloud_Functions
@@ -49,7 +53,3 @@ return json
 &nbsp;&nbsp;&nbsp;&nbsp;"message": "user created",<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;"id": id_of_created_user<br/>
 &nbsp;&nbsp;}<br/>
-
-
-# Java_API
-asd
