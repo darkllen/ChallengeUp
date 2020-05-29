@@ -15,11 +15,15 @@
 **Constructors:** <br/>
 Constructor | Description
 -------------|-------------
+
 **Static methods:** <br/>
+
 Return | Method | Description
 -------------|-------------|-------------
 a|v|b
+
 **Methods** <br/>
+
 Return | Method | Description
 -------------|-------------|-------------
 
