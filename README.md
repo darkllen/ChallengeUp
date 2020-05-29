@@ -52,6 +52,18 @@ ArrayList<User>|all subscriptions of this user|getSubscriptionsAsUsers()|get all
 ArrayList<User>|all subscribers of this user|getSubscribersAsUsers()|get all subscribers
 
 ### Challenge
+**Fields:**<br/>
+Modifier|Type|Name|Description|Has getter|Has setter
+--------|------|-----|-------|--------|-----------
+private|String|
+private|String|
+private|String|
+private|String|
+private|int|
+private|int|
+private|ArrayList<String>|
+private|ArrayList<String>|
+
 **Constructors:** <br/>
 Constructor | Description
 **Static methods:** <br/>
