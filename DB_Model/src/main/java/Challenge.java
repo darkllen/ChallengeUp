@@ -11,9 +11,11 @@ public class Challenge {
     String id;
     private String name;
     private String task;
+    private String creator_id;
+
     private int likes;
     private int timesViewed;
-    private String creator_id;
+
     private ArrayList<String> tags;
     private ArrayList<String> categories;
 
@@ -27,26 +29,42 @@ public class Challenge {
         timesViewed = 0;
         id = null;
     }
-
     public Challenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories) {
-        this.name = name;
-        this.task = task;
-        this.creator_id = creator_id;
+        this(name, task, creator_id);
         this.tags = tags;
         this.categories = categories;
-        likes = 0;
-        timesViewed = 0;
-        id = null;
-    }
-
-    private void setId(String id){
-        this.id = id;
     }
 
     public static String addNewChallenge(Challenge challenge){
-        String id = addNewChallenge(challenge.name, challenge.task, challenge.creator_id, challenge.tags, challenge.categories);
-        challenge.setId(id);
-        return id;
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        try {
+            JSONObject jsonObject = new JSONObject()
+                    .put("name", challenge.name)
+                    .put("task", challenge.task)
+                    .put("creator_id",challenge.creator_id)
+                    .put("likes", challenge.likes)
+                    .put("times_viewed", challenge.timesViewed)
+                    .put("tags", challenge.tags)
+                    .put("categories", challenge.categories);
+
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+
+            Request request = new Request.Builder()
+                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/add_challenge")
+                    .post(body)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            String resStr = response.body().string();
+            JSONObject object = new JSONObject(resStr);
+
+            return object.getString("id");
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
     public static String addNewChallenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories){
         OkHttpClient client = new OkHttpClient();
@@ -56,6 +74,8 @@ public class Challenge {
                     .put("name", name)
                     .put("task", task)
                     .put("creator_id",creator_id)
+                    .put("likes", 0)
+                    .put("times_viewed", 0)
                     .put("tags", tags)
                     .put("categories", categories);
 
@@ -77,6 +97,7 @@ public class Challenge {
         }
         return "";
     }
+
     public static ArrayList<Challenge> getAllChallenges(){
         try {
             OkHttpClient client = new OkHttpClient();
@@ -166,6 +187,7 @@ public class Challenge {
         }
         return null;
     }
+
     public void update(){
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -196,60 +218,49 @@ public class Challenge {
     public String getId() {
         return id;
     }
-
     public String getName() {
         return name;
     }
-
     public String getTask() {
         return task;
     }
-
     public int getLikes() {
         return likes;
     }
-
     public int getTimesViewed() {
         return timesViewed;
     }
-
     public String getCreator_id() {
         return creator_id;
     }
-
     public ArrayList<String> getTags() {
         return tags;
     }
-
     public ArrayList<String> getCategories() {
         return categories;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
     public void setTask(String task) {
         this.task = task;
     }
-
     public void setLikes(int likes) {
         this.likes = likes;
     }
-
     public void setTimesViewed(int timesViewed) {
         this.timesViewed = timesViewed;
     }
-
     public void setCreator_id(String creator_id) {
         this.creator_id = creator_id;
     }
-
     public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
-
     public void setCategories(ArrayList<String> categories) {
         this.categories = categories;
+    }
+    private void setId(String id){
+        this.id = id;
     }
 }

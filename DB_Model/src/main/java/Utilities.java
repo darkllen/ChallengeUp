@@ -7,11 +7,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+
 
 public class Utilities {
-
     public static ArrayList<String> getCategories() {
         try {
             OkHttpClient client = new OkHttpClient();

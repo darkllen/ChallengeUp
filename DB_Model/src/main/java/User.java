@@ -31,13 +31,76 @@ public class User {
         undone = new ArrayList<>();
         done = new ArrayList<>();
         categories = new ArrayList<>();
+        subscriptions = new ArrayList<>();
         id = null;
     }
-
     public User(String tag, String nick, String email, String password, ArrayList<String> categories) {
         this(tag, nick, email, password);
         this.categories = categories;
     }
+
+    public static String addNewUser(User user){
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        try {
+            JSONObject jsonObject = new JSONObject()
+                    .put("tag", user.tag)
+                    .put("email", user.email)
+                    .put("nick", user.nick)
+                    .put("password", user.password)
+                    .put("categories", user.categories)
+                    .put("subscriptions", user.subscriptions)
+                    .put("undone", user.undone)
+                    .put("done", user.done)
+;
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+
+            Request request = new Request.Builder()
+                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/add_user")
+                    .post(body)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            String resStr = response.body().string();
+            JSONObject object = new JSONObject(resStr);
+            return object.getString("id");
+        } catch (JSONException  | IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+    public static String addNewUser(String tag, String nick, String email, String password, ArrayList<String> categories){
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        try {
+            JSONObject jsonObject = new JSONObject()
+                    .put("tag", tag)
+                    .put("email", email)
+                    .put("nick", nick)
+                    .put("password", password)
+                    .put("categories", categories)
+                    .put("subscriptions", new ArrayList())
+                    .put("undone", new ArrayList())
+                    .put("done", new ArrayList());
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+
+            Request request = new Request.Builder()
+                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/add_user")
+                    .post(body)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            String resStr = response.body().string();
+            JSONObject object = new JSONObject(resStr);
+            return object.getString("id");
+        } catch (JSONException  | IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
 
     public void addChallengeToDone(Challenge challenge){
         done.add(challenge.getId());
@@ -46,12 +109,26 @@ public class User {
         undone.add(challenge.getId());
     }
 
+
+
     public ArrayList<Challenge> getDoneChallenges(){
         ArrayList<Challenge> challenges = new ArrayList<>();
         for (String s:done) {
             challenges.add(Challenge.getChallengeById(s));
         }
         return challenges;
+    }
+    public ArrayList<Challenge> getUnDoneChallenges(){
+        ArrayList<Challenge> challenges = new ArrayList<>();
+        for (String s:undone) {
+            challenges.add(Challenge.getChallengeById(s));
+        }
+        return challenges;
+    }
+    public ArrayList<Challenge> getAllCreatedChallenges(){
+        ArrayList<Challenge> challenges = Challenge.getAllChallenges();
+        ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getCreator_id().equals(id)).collect(Collectors.toList());
+        return a;
     }
 
     public ArrayList<User> getSubscriptionsAsUsers(){
@@ -68,47 +145,6 @@ public class User {
     }
 
 
-    public ArrayList<Challenge> getUnDoneChallenges(){
-        ArrayList<Challenge> challenges = new ArrayList<>();
-        for (String s:undone) {
-            challenges.add(Challenge.getChallengeById(s));
-        }
-        return challenges;
-    }
-
-    public static String addNewUser(User user){
-        String id = addNewUser(user.tag, user.nick, user.email, user.password, user.categories);
-        user.setId(id);
-        return id;
-    }
-    public static String addNewUser(String tag, String nick, String email, String password, ArrayList<String> categories){
-        OkHttpClient client = new OkHttpClient();
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        try {
-            JSONObject jsonObject = new JSONObject()
-                    .put("tag", tag)
-                    .put("email", email)
-                    .put("nick", nick)
-                    .put("password", password)
-                    .put("categories", categories);
-
-            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
-
-            Request request = new Request.Builder()
-                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/add_user")
-                    .post(body)
-                    .build();
-
-            Response response = client.newCall(request).execute();
-            String resStr = response.body().string();
-            JSONObject object = new JSONObject(resStr);
-            return object.getString("id");
-
-        } catch (JSONException  | IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
     public static ArrayList<User> getAllUsers(){
         try {
             OkHttpClient client = new OkHttpClient();
@@ -161,10 +197,7 @@ public class User {
                 user.setDone(doneArray);
                 user.setUndone(undoneArray);
                 user.setSubscriptions(subscriptionsArray);
-
                 users.add(user);
-
-
             }
             return users;
         } catch (IOException | JSONException e) {
@@ -227,6 +260,7 @@ public class User {
         }
         return null;
     }
+
     public void update(){
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -258,74 +292,58 @@ public class User {
 
 
 
+
     private void setId(String id){
         this.id = id;
     }
-
     public String getId() {
         return id;
     }
-
     public String getTag() {
         return tag;
     }
-
     public String getNick() {
         return nick;
     }
-
     public String getEmail() {
         return email;
     }
-
     public String getPassword() {
         return password;
     }
-
     public void setTag(String tag) {
         this.tag = tag;
     }
-
     public void setNick(String nick) {
         this.nick = nick;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
     public void setPassword(String password) {
         this.password = password;
     }
-
     public ArrayList<String> getUndone() {
         return undone;
     }
-
     public void setUndone(ArrayList<String> undone) {
         this.undone = undone;
     }
-
     public ArrayList<String> getDone() {
         return done;
     }
-
     public void setDone(ArrayList<String> done) {
         this.done = done;
     }
-
     public ArrayList<String> getCategories() {
         return categories;
     }
-
     public void setCategories(ArrayList<String> categories) {
         this.categories = categories;
     }
-
     public ArrayList<String> getSubscriptions() {
         return subscriptions;
     }
-
     public void setSubscriptions(ArrayList<String> subscriptions) {
         this.subscriptions = subscriptions;
     }

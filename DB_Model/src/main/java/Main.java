@@ -1,13 +1,22 @@
 
-import javax.jws.soap.SOAPBinding;
 import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<String> ca = new ArrayList<>();
-        ca.add("everyday");
-        System.out.println(Challenge.getChallengeById("-M8SD_ZaVEGBJ_JfW6Ab").getCategories());
+        User user = User.getAllUsers().get(0);
 
+        Challenge challenge1 = new Challenge("a", "f", user.getId());
+        Challenge challenge2 = new Challenge("ab", "fa", user.getId());
+        Challenge challenge3 = new Challenge("az", "ft", user.getId());
+
+        Challenge.addNewChallenge(challenge1);
+        Challenge.addNewChallenge(challenge2);
+        Challenge.addNewChallenge(challenge3);
+
+
+        ArrayList<Challenge> challenges = user.getAllCreatedChallenges();
+
+        System.out.println(challenges);
 
     }
 }
