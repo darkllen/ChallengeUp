@@ -81,12 +81,17 @@ String|id of new Challenge in db|addNewChallenge(Challenge challenge)|add Challe
 String|id of new Challenge in db|addNewChallenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories)|add Challenge to db with all of it parameters, change id of challenge to relevant
 ArrayList of Challenges|all challenge|getAllChallenges()|get all challenges from db
 Challenge|challenge with certain id or null if there is no challenge with id|getChallengeById(String id)|get Challenge with id from db 
+ArrayList of Challenges|all challenges with this category|getAllWithCategory(String category)|get all challenges with certain category
+ArrayList of Challenges|all challenges with this tag|getAllWithTag(String tag)|get all challenges with certain tag
+ArrayList of Challenges|all challenges with these categories|getAllWithCategories(ArrayList of Strings categories)|get all challenges with certain categories
+ArrayList of Challenges|all challenges with these tags|getAllWithTags(ArrayList of Strings tags)|get all challenges with certain tags
 
 **Methods** <br/>
 
 Return|Return description|Method|Method Description
 -------------|-------------|-------------|-------------
 void||update()|rewrite Challenge params in db with this object
+ArrayList of Comments|all comments belong to this challenge| getAllComments()| get all comments of this challenge
 
 ### Utilities
 **Static methods:** <br/>
@@ -94,4 +99,38 @@ void||update()|rewrite Challenge params in db with this object
 Return|Return description|Method|Method Description
 -------------|-------------|-------------|-------------
 ArrayList of Strings|all categories|getCategories()|get categories from db
+
+### Comment
+**Fields:**<br/>
+
+Modifier|Type|Name|Description|Has getter|Has setter
+--------|------|-----|-------|--------|-----------
+private|String|id|comment id|+|-
+private|String|message|comment text|+|-
+private|String|user_id|id of comment creator|+|-
+private|String|challenge_id|id of challenge, wich is commented|+|-
+private|int|likes|number og likes|+|+
+private|String|date|date of writing comments|+|-
+private|String|reply_on_id|id of comment, on which this comment is a reply, "" if it isn`t a reply|+|-
+
+**Constructors:** <br/>
+Constructor | Description
+-------------|-------------
+Comment(String message, String user_id, String challenge_id, String date)| id is null untill object is added to db, reply_on_id - "".
+Comment(String message, String user_id, String challenge_id, String date, String reply_on_id)|id is null untill object is added to db
+
+**Static methods:** <br/>
+
+Return|Return description|Method|Method Description
+-------------|-------------|-------------|-------------
+String|id of new Comment in db|addNewComment(Comment comment)|add Comment to db with all of it parameters, change id of comment to relevant
+String|id of new Comment in db|addNewComment(String message, String user_id, String challenge_id, String date, String reply_on_id)|creaate Comment in db.
+ArrayList of Comments|all comments|getAllComments()|get all comments from db
+
+**Methods** <br/>
+
+Return|Return description|Method|Method Description
+-------------|-------------|-------------|-------------
+void||update()|rewrite Comment params in db with this object
+
 
