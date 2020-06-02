@@ -9,6 +9,7 @@
 **classes:**<br/>
 [User](#User)<br/>
 [Challenge](#Challenge)<br/>
+[Comment](#Comment)<br/>
 [Utilities](#Utilities)<br/>
 
 ### User
@@ -93,13 +94,6 @@ Return|Return description|Method|Method Description
 void||update()|rewrite Challenge params in db with this object
 ArrayList of Comments|all comments belong to this challenge| getAllComments()| get all comments of this challenge
 
-### Utilities
-**Static methods:** <br/>
-
-Return|Return description|Method|Method Description
--------------|-------------|-------------|-------------
-ArrayList of Strings|all categories|getCategories()|get categories from db
-
 ### Comment
 **Fields:**<br/>
 
@@ -132,5 +126,14 @@ ArrayList of Comments|all comments|getAllComments()|get all comments from db
 Return|Return description|Method|Method Description
 -------------|-------------|-------------|-------------
 void||update()|rewrite Comment params in db with this object
+
+
+### Utilities
+**Static methods:** <br/>
+
+Return|Return description|Method|Method Description
+-------------|-------------|-------------|-------------
+ArrayList of Strings|all categories|getCategories()|get categories from db
+
 
 
