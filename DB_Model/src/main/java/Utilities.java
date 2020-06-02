@@ -1,6 +1,4 @@
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,5 +29,25 @@ public class Utilities {
         }
         return null;
     }
+
+/*    public static void addNewCategory(String category){
+        OkHttpClient client = new OkHttpClient();
+        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+        try {
+            JSONObject jsonObject = new JSONObject()
+                    .put("category", category);
+
+            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+
+            Request request = new Request.Builder()
+                    .url("https://us-central1-challengeup-49057.cloudfunctions.net/add_category")
+                    .post(body)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+    }*/
 }
 

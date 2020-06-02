@@ -495,5 +495,39 @@ def get_subscribers():
     firebase_admin.delete_app(fb)
     return jsonify(response)
 
+@app.route("/add_category", methods = ['POST'])
+def add_category():
+    # imports
+    import firebase_admin
+    import json
+    import os
+    from firebase_admin import db
+    from firebase_admin import credentials
+    from flask import jsonify
+    # init firebase app
+
+    from dotenv import load_dotenv
+    dotenv_path = os.path.dirname(__file__) + "/cred.env"
+    load_dotenv(dotenv_path)
+    cred = credentials.Certificate(json.loads(os.getenv("FIREBASE_CRED")))
+    fb = firebase_admin.initialize_app(cred, {'databaseURL': 'https://challengeup-49057.firebaseio.com'})
+
+    # get all info from request
+    category = request.get_json(silent=True)['category']
+
+    # get reference to users table
+    categories_ref = db.reference('').child('categories')
+
+    # insert new
+    new_category = categories_ref.set(
+        category
+    )
+    firebase_admin.delete_app(fb)
+    response = {
+        "status": 200,
+        "message": "category created"
+    }
+    return jsonify(response)
+
 
 app.run()

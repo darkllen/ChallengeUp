@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class Challenge {
     private String id;
@@ -185,6 +186,34 @@ public class Challenge {
         } catch (IOException | JSONException e) {
             return null;
         }
+    }
+
+    public static ArrayList<Challenge> getAllWithCategory(String category){
+        ArrayList<Challenge> challenges = Challenge.getAllChallenges();
+        ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getCategories().contains(category)).collect(Collectors.toList());
+        return a;
+    }
+    public static ArrayList<Challenge> getAllWithTag(String tag){
+        ArrayList<Challenge> challenges = Challenge.getAllChallenges();
+        ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getTags().contains(tag)).collect(Collectors.toList());
+        return a;
+    }
+
+    public static ArrayList<Challenge> getAllWithCategories(ArrayList<String> categories){
+        ArrayList<Challenge> challenges = Challenge.getAllChallenges();
+        ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getCategories().containsAll(categories)).collect(Collectors.toList());
+        return a;
+    }
+    public static ArrayList<Challenge> getAllWithTags(ArrayList<String> tags){
+        ArrayList<Challenge> challenges = Challenge.getAllChallenges();
+        ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getTags().containsAll(tags)).collect(Collectors.toList());
+        return a;
+    }
+
+    public ArrayList<Comment> getAllComments(){
+        ArrayList<Comment> comments = Comment.getAllComments();
+        ArrayList<Comment> a = (ArrayList<Comment>) comments.stream().filter(x->x.getChallenge_id().equals(id)).collect(Collectors.toList());
+        return a;
     }
 
     public void update(){

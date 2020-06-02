@@ -71,12 +71,15 @@ update_comment = "http://127.0.0.1:5000/update_comment"
 
 
 
-#r = requests.post(get_challenge_by_id, json=data_id_challenge)
+r = requests.get(get_all_challenges, json=data_id_challenge)
 
 f = {
-    "user_id":"-M8RyaVoyGniv5sXTJ1W"
+    "category":"gds",
+    "s":"s"
 }
 
-r = requests.get("http://127.0.0.1:5000/get_subscribers", params=f)
+#r = requests.post("http://127.0.0.1:5000/add_category", json=f)
 
+print(r.status_code)
+print(r.reason)
 print(r.json())
