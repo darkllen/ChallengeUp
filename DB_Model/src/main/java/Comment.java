@@ -52,6 +52,7 @@ public class Comment {
             String resStr = response.body().string();
             JSONObject object = new JSONObject(resStr);
 
+            comment.setId(object.getString("id"));
             return object.getString("id");
         } catch (JSONException | IOException e) {
             e.printStackTrace();

@@ -61,6 +61,7 @@ public class Challenge {
             String resStr = response.body().string();
             JSONObject object = new JSONObject(resStr);
 
+            challenge.setId(object.getString("id"));
             return object.getString("id");
         } catch (JSONException | IOException e) {
             e.printStackTrace();

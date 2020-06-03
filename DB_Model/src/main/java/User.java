@@ -3,8 +3,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,12 @@ public class User {
     private ArrayList<String> subscriptions;
     private ArrayList<String> undone;
     private ArrayList<String> done;
+    private ArrayList<String> saved;
+    private ArrayList<String> achievements;
+
+    private HashMap<String, String> links;
+
+    private File photo;
 
 
 
@@ -32,8 +40,40 @@ public class User {
         done = new ArrayList<>();
         categories = new ArrayList<>();
         subscriptions = new ArrayList<>();
+        saved = new ArrayList<>();
+        achievements = new ArrayList<>();
         id = null;
+        photo = null;
+
+        links = new HashMap<>();
+        links.put("facebook","");
+        links.put("instagram","");
+        links.put("youtube","");
     }
+    public String getFacebookLink(){
+       return links.get("facebook");
+    }
+    public String getInstagramLink(){
+        return links.get("instagram");
+    }
+    public String getYoutubeLink(){
+        return links.get("youtube");
+    }
+
+    public void setFacebookLink(String link){
+        links.put("facebook", link);
+    }
+    public void setInstagramLink(String link){
+        links.put("instagram", link);
+    }
+    public void setYuotubeLink(String link){
+        links.put("youtube", link);
+    }
+
+    public void setAchievements(ArrayList<String> achievements) {
+        this.achievements = achievements;
+    }
+
     public User(String tag, String nick, String email, String password, ArrayList<String> categories) {
         this(tag, nick, email, password);
         this.categories = categories;
@@ -41,7 +81,6 @@ public class User {
 
     public static String addNewUser(User user){
         OkHttpClient client = new OkHttpClient();
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
             JSONObject jsonObject = new JSONObject()
                     .put("tag", user.tag)
@@ -52,18 +91,31 @@ public class User {
                     .put("subscriptions", user.subscriptions)
                     .put("undone", user.undone)
                     .put("done", user.done)
-;
+                    .put("links", user.links)
+                    .put("saved", user.saved)
+                    .put("trophies", user.achievements);
 
-            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+            RequestBody requestBody;
+            if (user.photo!=null){
+                requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("data", jsonObject.toString())
+                        .addFormDataPart("file", user.photo.getName(), RequestBody.create(MediaType.parse("image/png"), user.photo))
+                        .build();
+            }   else {
+                requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("data", jsonObject.toString())
+                        .build();
+            }
 
             Request request = new Request.Builder()
                     .url("https://us-central1-challengeup-49057.cloudfunctions.net/add_user")
-                    .post(body)
+                    .post(requestBody)
                     .build();
 
             Response response = client.newCall(request).execute();
             String resStr = response.body().string();
             JSONObject object = new JSONObject(resStr);
+            user.setId(object.getString("id"));
             return object.getString("id");
         } catch (JSONException  | IOException e) {
             e.printStackTrace();
@@ -72,7 +124,6 @@ public class User {
     }
     public static String addNewUser(String tag, String nick, String email, String password, ArrayList<String> categories){
         OkHttpClient client = new OkHttpClient();
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
             JSONObject jsonObject = new JSONObject()
                     .put("tag", tag)
@@ -82,13 +133,20 @@ public class User {
                     .put("categories", categories)
                     .put("subscriptions", new ArrayList())
                     .put("undone", new ArrayList())
-                    .put("done", new ArrayList());
+                    .put("done", new ArrayList())
+                    .put("links", new HashMap())
+                    .put("saved", new ArrayList())
+                    .put("trophies", new ArrayList());
 
-            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+            RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("data", jsonObject.toString())
+                        .build();
+
+
 
             Request request = new Request.Builder()
                     .url("https://us-central1-challengeup-49057.cloudfunctions.net/add_user")
-                    .post(body)
+                    .post(requestBody)
                     .build();
 
             Response response = client.newCall(request).execute();
@@ -108,6 +166,11 @@ public class User {
     public void addChallengeToUndone(Challenge challenge){
         undone.add(challenge.getId());
     }
+    public void addChallengeToSaved(Challenge challenge){
+        saved.add(challenge.getId());
+    }
+
+    public void addAchievement(Trophy trophy){achievements.add(trophy.getId());};
 
 
 
@@ -125,10 +188,29 @@ public class User {
         }
         return challenges;
     }
+    public ArrayList<Challenge> getSavedChallenges(){
+        ArrayList<Challenge> challenges = new ArrayList<>();
+        for (String s:saved) {
+            challenges.add(Challenge.getChallengeById(s));
+        }
+        return challenges;
+    }
     public ArrayList<Challenge> getAllCreatedChallenges(){
         ArrayList<Challenge> challenges = Challenge.getAllChallenges();
         ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getCreator_id().equals(id)).collect(Collectors.toList());
         return a;
+    }
+
+    public ArrayList<Trophy> getAchievementsAsTrophies(){
+        ArrayList<Trophy> trophies = new ArrayList<>();
+        for (String s:achievements) {
+            trophies.add(Trophy.getTrophyById(s));
+        }
+        return trophies;
+    }
+
+    public ArrayList<String> getAchievements() {
+        return achievements;
     }
 
     public ArrayList<User> getSubscriptionsAsUsers(){
@@ -167,6 +249,30 @@ public class User {
                 ArrayList<String> categoriesArray = new ArrayList<>();
                 ArrayList<String> subscriptionsArray = new ArrayList<>();
 
+                HashMap<String,String> links = new HashMap<>();
+
+                ArrayList<String> saved = new ArrayList<>();
+                ArrayList<String> achievements = new ArrayList<>();
+                try{
+                    JSONArray s = object.getJSONObject(key).getJSONArray("trophies");
+                    for (int i = 0; i< s.length(); ++i)achievements.add((String) s.get(i));
+                } catch (JSONException ignored){}
+
+
+
+                try{
+                    JSONArray s = object.getJSONObject(key).getJSONArray("saved");
+                    for (int i = 0; i< s.length(); ++i)saved.add((String) s.get(i));
+                } catch (JSONException ignored){}
+
+
+                try{
+                    JSONObject l = object.getJSONObject(key).getJSONObject("links");
+                    links.put("facebook", l.getString("facebook"));
+                    links.put("instagram", l.getString("instagram"));
+                    links.put("youtube", l.getString("youtube"));
+                } catch (JSONException ignored){}
+
                 try{
                     JSONArray subscriptions = object.getJSONObject(key).getJSONArray("subscriptions");
                     for (int i = 0; i< subscriptions.length(); ++i)subscriptionsArray.add((String) subscriptions.get(i));
@@ -197,6 +303,9 @@ public class User {
                 user.setDone(doneArray);
                 user.setUndone(undoneArray);
                 user.setSubscriptions(subscriptionsArray);
+                user.setLinks(links);
+                user.setSaved(saved);
+                user.setAchievements(achievements);
                 users.add(user);
             }
             return users;
@@ -222,6 +331,26 @@ public class User {
             ArrayList<String> doneArray = new ArrayList<>();
             ArrayList<String> categoriesArray = new ArrayList<>();
             ArrayList<String> subscriptionsArray = new ArrayList<>();
+
+            HashMap<String,String> links = new HashMap<>();
+
+            ArrayList<String> saved = new ArrayList<>();
+            ArrayList<String> achievements = new ArrayList<>();
+            try{
+                JSONArray s = object.getJSONObject(id).getJSONArray("trophies");
+                for (int i = 0; i< s.length(); ++i)achievements.add((String) s.get(i));
+            } catch (JSONException ignored){}
+            try{
+                JSONArray s = object.getJSONObject(id).getJSONArray("saved");
+                for (int i = 0; i< s.length(); ++i)saved.add((String) s.get(i));
+            } catch (JSONException ignored){}
+
+            try{
+                JSONObject l = object.getJSONObject(id).getJSONObject("links");
+                links.put("facebook", l.getString("facebook"));
+                links.put("instagram", l.getString("instagram"));
+                links.put("youtube", l.getString("youtube"));
+            } catch (JSONException ignored){}
 
             try{
                 JSONArray subscriptions = object.getJSONObject(id).getJSONArray("subscriptions");
@@ -253,6 +382,9 @@ public class User {
                 user.setUndone(undoneArray);
                 user.setDone(doneArray);
                 user.setSubscriptions(subscriptionsArray);
+                user.setLinks(links);
+                user.setSaved(saved);
+                user.setAchievements(achievements);
 
             return user;
         } catch (IOException | JSONException e) {
@@ -273,13 +405,29 @@ public class User {
                     .put("done", done)
                     .put("undone", undone)
                     .put("categories", categories)
-                    .put("subscriptions", subscriptions);
+                    .put("subscriptions", subscriptions)
+                    .put("links", links)
+                    .put("saved", saved)
+                    .put("trophies", achievements);
 
-            RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+            //RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
+            RequestBody requestBody;
+            if (photo!=null){
+                requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("data", jsonObject.toString())
+                        .addFormDataPart("file", photo.getName(), RequestBody.create(MediaType.parse("image/png"), photo))
+                        .build();
+            }   else {
+                requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("data", jsonObject.toString())
+                        .build();
+            }
+
+
 
             Request request = new Request.Builder()
                     .url("https://us-central1-challengeup-49057.cloudfunctions.net/update_user")
-                    .post(body)
+                    .post(requestBody)
                     .build();
 
             client.newCall(request).execute();
@@ -289,6 +437,19 @@ public class User {
         }
     }
 
+
+    private void setLinks(HashMap<String, String> links) {
+        this.links = links;
+    }
+
+
+    public ArrayList<String> getSaved() {
+        return saved;
+    }
+
+    public void setSaved(ArrayList<String> saved) {
+        this.saved = saved;
+    }
 
     public String getId() {
         return id;
@@ -344,5 +505,21 @@ public class User {
     }
     public void setSubscriptions(ArrayList<String> subscriptions) {
         this.subscriptions = subscriptions;
+    }
+
+    public File getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(File photo) {
+        this.photo = photo;
+    }
+
+    public static void main(String[] args) {
+        Trophy trophy = Trophy.getTrophyById("-M8vdqsRpN7HvuZ8zbZw");
+        System.out.println(trophy.getId());
+        trophy.setName("xxxx");
+        trophy.update();
+
     }
 }
