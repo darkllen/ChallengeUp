@@ -30,7 +30,7 @@ public class Utilities {
         return null;
     }
 
-/*    public static void addNewCategory(String category){
+    public static boolean addNewCategory(String category){
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -44,10 +44,11 @@ public class Utilities {
                     .post(body)
                     .build();
 
-            Response response = client.newCall(request).execute();
+            client.newCall(request).execute();
+            return true;
         } catch (JSONException | IOException e) {
-            e.printStackTrace();
+            return false;
         }
-    }*/
+    }
 }
 

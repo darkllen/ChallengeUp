@@ -4,6 +4,7 @@ from flask import request
 
 app = Flask(__name__)
 
+
 @app.route("/add_user",methods=['POST'])
 def add_user():
     # imports
