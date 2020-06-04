@@ -1,6 +1,11 @@
 import java.util.ArrayList;
 
 public class Validation {
+    public static boolean validateUserTagToBeUnique(String tag) throws IllegalArgumentException{
+        ArrayList<User> users = User.getAllUsers();
+        if(users.stream().anyMatch(x->x.getTag().equals(tag))) throw new IllegalArgumentException("tag is not unique");
+        return true;
+    }
     public static boolean validateName(String name) throws IllegalArgumentException{
         if (name == null) throw new IllegalArgumentException("name can`t be null");
         if (name.equals("")) throw new IllegalArgumentException("name can`t be empty");

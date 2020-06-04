@@ -38,6 +38,7 @@ public class User {
         Validation.validateNickTagPassword(tag);
         Validation.validateNickTagPassword(password);
         Validation.validateEmail(email);
+        Validation.validateUserTagToBeUnique(tag);
         this.tag = tag;
         this.nick = nick;
         this.email = email;
@@ -115,6 +116,7 @@ public class User {
         Validation.validateNickTagPassword(tag);
         Validation.validateNickTagPassword(password);
         Validation.validateEmail(email);
+        Validation.validateUserTagToBeUnique(tag);
         OkHttpClient client = new OkHttpClient();
         try {
             JSONObject jsonObject = new JSONObject()
@@ -491,6 +493,7 @@ public class User {
     }
     public void setTag(String tag)  throws IllegalArgumentException{
         Validation.validateNickTagPassword(tag);
+        Validation.validateUserTagToBeUnique(tag);
         this.tag = tag;
     }
     public void setNick(String nick) throws IllegalArgumentException{
