@@ -17,10 +17,15 @@ public class Challenge {
     private int likes;
     private int timesViewed;
 
+    private int rewardRp;
+    private ArrayList<String> rewardTrophies;
+
     private ArrayList<String> tags;
     private ArrayList<String> categories;
 
     public Challenge(String name, String task, String creator_id) {
+        Validation.validateName(name);
+        Validation.validateTask(task);
         this.name = name;
         this.task = task;
         this.creator_id = creator_id;
@@ -28,12 +33,33 @@ public class Challenge {
         categories = new ArrayList<>();
         likes = 0;
         timesViewed = 0;
+        rewardRp = 0;
+        rewardTrophies = new ArrayList<>();
         id = null;
     }
     public Challenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories) {
         this(name, task, creator_id);
+        Validation.validateTags(tags);
+        Validation.validateTags(categories);
         this.tags = tags;
         this.categories = categories;
+    }
+
+
+    public int getRewardRp() {
+        return rewardRp;
+    }
+
+    public void setRewardRp(int rewardRp) {
+        this.rewardRp = rewardRp;
+    }
+
+    public ArrayList<String> getRewardTrophies() {
+        return rewardTrophies;
+    }
+
+    public void setRewardTrophies(ArrayList<String> rewardTrophies) {
+        this.rewardTrophies = rewardTrophies;
     }
 
     public static String addNewChallenge(Challenge challenge){
@@ -47,7 +73,9 @@ public class Challenge {
                     .put("likes", challenge.likes)
                     .put("times_viewed", challenge.timesViewed)
                     .put("tags", challenge.tags)
-                    .put("categories", challenge.categories);
+                    .put("categories", challenge.categories)
+                    .put("rewardRp", challenge.rewardRp)
+                    .put("rewardTrophies", challenge.rewardTrophies);
 
 
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
@@ -69,6 +97,8 @@ public class Challenge {
         return "";
     }
     public static String addNewChallenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories){
+        Validation.validateTags(tags);
+        Validation.validateTags(categories);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -79,7 +109,9 @@ public class Challenge {
                     .put("likes", 0)
                     .put("times_viewed", 0)
                     .put("tags", tags)
-                    .put("categories", categories);
+                    .put("categories", categories)
+                    .put("rewardRp", 0)
+                    .put("rewardTrophies", new ArrayList());
 
 
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
@@ -120,6 +152,13 @@ public class Challenge {
                 ArrayList<String> tagsArray = new ArrayList<>();
                 ArrayList<String> categoriesArray = new ArrayList<>();
 
+                ArrayList<String> trophiesArray = new ArrayList<>();
+
+                try{
+                    JSONArray rewardTrophies = object.getJSONObject(key).getJSONArray("rewardTrophies");
+                    for (int i = 0; i< rewardTrophies.length(); ++i)trophiesArray.add((String) rewardTrophies.get(i));
+                } catch (JSONException ignored){}
+
                 try{
                     JSONArray tags = object.getJSONObject(key).getJSONArray("tags");
                     for (int i = 0; i< tags.length(); ++i)tagsArray.add((String) tags.get(i));
@@ -140,6 +179,8 @@ public class Challenge {
                 challenge.setId(key);
                 challenge.setLikes(Integer.parseInt(object.getJSONObject(key).getString("likes")));
                 challenge.setTimesViewed(Integer.parseInt(object.getJSONObject(key).getString("times_viewed")));
+                challenge.setRewardRp(Integer.parseInt(object.getJSONObject(key).getString("rewardRp")));
+                challenge.setRewardTrophies(trophiesArray);
                 challenges.add(challenge);
             }
             return challenges;
@@ -163,6 +204,14 @@ public class Challenge {
 
             ArrayList<String> tagsArray = new ArrayList<>();
             ArrayList<String> categoriesArray = new ArrayList<>();
+
+            ArrayList<String> trophiesArray = new ArrayList<>();
+
+            try{
+                JSONArray rewardTrophies = object.getJSONObject(id).getJSONArray("rewardTrophies");
+                for (int i = 0; i< rewardTrophies.length(); ++i)trophiesArray.add((String) rewardTrophies.get(i));
+            } catch (JSONException ignored){}
+
             try{
                 JSONArray tags = object.getJSONObject(id).getJSONArray("tags");
                 for (int i = 0; i< tags.length(); ++i)tagsArray.add((String) tags.get(i));
@@ -182,6 +231,8 @@ public class Challenge {
             challenge.setId(id);
             challenge.setLikes(Integer.parseInt(object.getJSONObject(id).getString("likes")));
             challenge.setTimesViewed(Integer.parseInt(object.getJSONObject(id).getString("times_viewed")));
+            challenge.setRewardRp(Integer.parseInt(object.getJSONObject(id).getString("rewardRp")));
+            challenge.setRewardTrophies(trophiesArray);
 
             return challenge;
         } catch (IOException | JSONException e) {
@@ -211,6 +262,19 @@ public class Challenge {
         return a;
     }
 
+    public long numberOfPeopleWhoAccepted(){
+        ArrayList<User> users = User.getAllUsers();
+        return users.stream().filter(x->x.getUndone().contains(id)).count();
+    }
+    public long numberOfPeopleWhoComplete(){
+        ArrayList<User> users = User.getAllUsers();
+        return users.stream().filter(x->x.getDone().contains(id)).count();
+    }
+    public long numberOfPeopleWhoCompleteAndAccepted(){
+        ArrayList<User> users = User.getAllUsers();
+        return users.stream().filter(x->x.getDone().contains(id) || x.getUndone().contains(id)).count();
+    }
+
     public ArrayList<Comment> getAllComments(){
         ArrayList<Comment> comments = Comment.getAllComments();
         ArrayList<Comment> a = (ArrayList<Comment>) comments.stream().filter(x->x.getChallenge_id().equals(id)).collect(Collectors.toList());
@@ -229,7 +293,9 @@ public class Challenge {
                     .put("likes", likes)
                     .put("categories", categories)
                     .put("tags", tags)
-                    .put("times_viewed", timesViewed);
+                    .put("times_viewed", timesViewed)
+                    .put("rewardRp", rewardRp)
+                    .put("rewardTrophhies", rewardTrophies);
 
             RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
 
@@ -285,9 +351,11 @@ public class Challenge {
         this.creator_id = creator_id;
     }
     public void setTags(ArrayList<String> tags) {
+        Validation.validateTags(tags);
         this.tags = tags;
     }
     public void setCategories(ArrayList<String> categories) {
+        Validation.validateTags(categories);
         this.categories = categories;
     }
     private void setId(String id){

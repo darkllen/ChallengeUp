@@ -17,12 +17,15 @@ public class User {
     private String email;
     private String password;
 
+    private int rp;
+    private int totalRp;
+
     private ArrayList<String> categories;
     private ArrayList<String> subscriptions;
     private ArrayList<String> undone;
     private ArrayList<String> done;
     private ArrayList<String> saved;
-    private ArrayList<String> achievements;
+    private ArrayList<String> trophies;
 
     private HashMap<String, String> links;
 
@@ -31,6 +34,10 @@ public class User {
 
 
     public User(String tag, String nick, String email, String password) {
+        Validation.validateNickTagPassword(nick);
+        Validation.validateNickTagPassword(tag);
+        Validation.validateNickTagPassword(password);
+        Validation.validateEmail(email);
         this.tag = tag;
         this.nick = nick;
         this.email = email;
@@ -41,37 +48,21 @@ public class User {
         categories = new ArrayList<>();
         subscriptions = new ArrayList<>();
         saved = new ArrayList<>();
-        achievements = new ArrayList<>();
+        trophies = new ArrayList<>();
         id = null;
         photo = null;
+        rp = 0;
+        totalRp = 0;
 
         links = new HashMap<>();
         links.put("facebook","");
         links.put("instagram","");
         links.put("youtube","");
     }
-    public String getFacebookLink(){
-       return links.get("facebook");
-    }
-    public String getInstagramLink(){
-        return links.get("instagram");
-    }
-    public String getYoutubeLink(){
-        return links.get("youtube");
-    }
 
-    public void setFacebookLink(String link){
-        links.put("facebook", link);
-    }
-    public void setInstagramLink(String link){
-        links.put("instagram", link);
-    }
-    public void setYuotubeLink(String link){
-        links.put("youtube", link);
-    }
 
-    public void setAchievements(ArrayList<String> achievements) {
-        this.achievements = achievements;
+    public void setTrophies(ArrayList<String> trophies) {
+        this.trophies = trophies;
     }
 
     public User(String tag, String nick, String email, String password, ArrayList<String> categories) {
@@ -93,7 +84,10 @@ public class User {
                     .put("done", user.done)
                     .put("links", user.links)
                     .put("saved", user.saved)
-                    .put("trophies", user.achievements);
+                    .put("trophies", user.trophies)
+                    .put("rp", user.rp)
+                    .put("totalRp", user.totalRp);
+
 
             RequestBody requestBody;
             if (user.photo!=null){
@@ -123,6 +117,10 @@ public class User {
         return "";
     }
     public static String addNewUser(String tag, String nick, String email, String password, ArrayList<String> categories){
+        Validation.validateNickTagPassword(nick);
+        Validation.validateNickTagPassword(tag);
+        Validation.validateNickTagPassword(password);
+        Validation.validateEmail(email);
         OkHttpClient client = new OkHttpClient();
         try {
             JSONObject jsonObject = new JSONObject()
@@ -136,7 +134,9 @@ public class User {
                     .put("done", new ArrayList())
                     .put("links", new HashMap())
                     .put("saved", new ArrayList())
-                    .put("trophies", new ArrayList());
+                    .put("trophies", new ArrayList())
+                    .put("rp", 0)
+                    .put("totalRp", 0);
 
             RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("data", jsonObject.toString())
@@ -169,8 +169,7 @@ public class User {
     public void addChallengeToSaved(Challenge challenge){
         saved.add(challenge.getId());
     }
-
-    public void addAchievement(Trophy trophy){achievements.add(trophy.getId());};
+    public void addAchievement(Trophy trophy){trophies.add(trophy.getId());};
 
 
 
@@ -203,15 +202,12 @@ public class User {
 
     public ArrayList<Trophy> getAchievementsAsTrophies(){
         ArrayList<Trophy> trophies = new ArrayList<>();
-        for (String s:achievements) {
+        for (String s: this.trophies) {
             trophies.add(Trophy.getTrophyById(s));
         }
         return trophies;
     }
 
-    public ArrayList<String> getAchievements() {
-        return achievements;
-    }
 
     public ArrayList<User> getSubscriptionsAsUsers(){
         ArrayList<User> users = new ArrayList<>();
@@ -305,7 +301,9 @@ public class User {
                 user.setSubscriptions(subscriptionsArray);
                 user.setLinks(links);
                 user.setSaved(saved);
-                user.setAchievements(achievements);
+                user.setTrophies(achievements);
+                user.setRp(Integer.parseInt(object.getJSONObject(key).getString("rp")));
+                user.setTotalRp(Integer.parseInt(object.getJSONObject(key).getString("totalRp")));
                 users.add(user);
             }
             return users;
@@ -384,7 +382,9 @@ public class User {
                 user.setSubscriptions(subscriptionsArray);
                 user.setLinks(links);
                 user.setSaved(saved);
-                user.setAchievements(achievements);
+                user.setTrophies(achievements);
+                user.setRp(Integer.parseInt(object.getJSONObject(id).getString("rp")));
+                user.setTotalRp(Integer.parseInt(object.getJSONObject(id).getString("totalRp")));
 
             return user;
         } catch (IOException | JSONException e) {
@@ -408,7 +408,9 @@ public class User {
                     .put("subscriptions", subscriptions)
                     .put("links", links)
                     .put("saved", saved)
-                    .put("trophies", achievements);
+                    .put("trophies", trophies)
+                    .put("rp", rp)
+                    .put("totalRp", totalRp);
 
             //RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
             RequestBody requestBody;
@@ -438,18 +440,9 @@ public class User {
     }
 
 
-    private void setLinks(HashMap<String, String> links) {
-        this.links = links;
-    }
 
 
-    public ArrayList<String> getSaved() {
-        return saved;
-    }
 
-    public void setSaved(ArrayList<String> saved) {
-        this.saved = saved;
-    }
 
     public String getId() {
         return id;
@@ -478,20 +471,48 @@ public class User {
     public ArrayList<String> getSubscriptions() {
         return subscriptions;
     }
+    public String getFacebookLink(){
+        return links.get("facebook");
+    }
+    public String getInstagramLink(){
+        return links.get("instagram");
+    }
+    public String getYoutubeLink(){
+        return links.get("youtube");
+    }
+    public File getPhoto() {
+        return photo;
+    }
+    public ArrayList<String> getSaved() {
+        return saved;
+    }
+    public ArrayList<String> getTrophies() {
+        return trophies;
+    }
 
+
+
+
+    private void setLinks(HashMap<String, String> links) {
+        this.links = links;
+    }
     private void setId(String id){
         this.id = id;
     }
     public void setTag(String tag) {
+        Validation.validateNickTagPassword(tag);
         this.tag = tag;
     }
     public void setNick(String nick) {
+        Validation.validateNickTagPassword(nick);
         this.nick = nick;
     }
     public void setEmail(String email) {
+        Validation.validateEmail(email);
         this.email = email;
     }
     public void setPassword(String password) {
+        Validation.validateNickTagPassword(password);
         this.password = password;
     }
     public void setUndone(ArrayList<String> undone) {
@@ -506,19 +527,39 @@ public class User {
     public void setSubscriptions(ArrayList<String> subscriptions) {
         this.subscriptions = subscriptions;
     }
-
-    public File getPhoto() {
-        return photo;
+    public void setFacebookLink(String link){
+        links.put("facebook", link);
     }
-
+    public void setInstagramLink(String link){
+        links.put("instagram", link);
+    }
+    public void setYuotubeLink(String link){
+        links.put("youtube", link);
+    }
     public void setPhoto(File photo) {
         this.photo = photo;
+    }
+    public void setSaved(ArrayList<String> saved) {
+        this.saved = saved;
+    }
+
+    public int getRp() {
+        return rp;
+    }
+    public void setRp(int rp) {
+        this.rp = rp;
+    }
+    public int getTotalRp() {
+        return totalRp;
+    }
+    public void setTotalRp(int totalRp) {
+        this.totalRp = totalRp;
     }
 
     public static void main(String[] args) {
         Trophy trophy = Trophy.getTrophyById("-M8vdqsRpN7HvuZ8zbZw");
         System.out.println(trophy.getId());
-        trophy.setName("xxxx");
+        trophy.setName("ttt");
         trophy.update();
 
     }

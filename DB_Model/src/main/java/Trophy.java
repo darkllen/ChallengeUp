@@ -1,11 +1,9 @@
 import okhttp3.*;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
@@ -15,6 +13,8 @@ public class Trophy {
     private String description;
 
     public Trophy(String name, String description) {
+        Validation.validateName(name);
+        Validation.validateDescription(description);
         this.name = name;
         this.description = description;
         id = null;
@@ -47,6 +47,8 @@ public class Trophy {
         return "";
     }
     public static String addNewTrophy(String name, String description){
+        Validation.validateName(name);
+        Validation.validateDescription(description);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -145,7 +147,7 @@ public class Trophy {
 
     public ArrayList<User> getUsersWithThisTrophy(){
         ArrayList<User> users = User.getAllUsers();
-        ArrayList<User> a = (ArrayList<User>) users.stream().filter(x->x.getAchievements().contains(id)).collect(Collectors.toList());
+        ArrayList<User> a = (ArrayList<User>) users.stream().filter(x->x.getTrophies().contains(id)).collect(Collectors.toList());
         return a;
     }
 
@@ -162,6 +164,7 @@ public class Trophy {
     }
 
     public void setName(String name) {
+        Validation.validateName(name);
         this.name = name;
     }
 
@@ -170,6 +173,7 @@ public class Trophy {
     }
 
     public void setDescription(String description) {
+        Validation.validateDescription(description);
         this.description = description;
     }
 }

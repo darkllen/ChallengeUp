@@ -148,6 +148,8 @@ public class Comment {
         }
     }
 
+
+
     public int getLikes() {
         return likes;
     }
