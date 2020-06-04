@@ -10,6 +10,7 @@
 [User](#User)<br/>
 [Challenge](#Challenge)<br/>
 [Comment](#Comment)<br/>
+[Trophy](#Trophy)<br/>
 [Utilities](#Utilities)<br/>
 
 if there is needed to pass arrayList, but you don\`t have it, you can pass new ArrayList() and it will be ok
