@@ -33,7 +33,7 @@ public class User {
 
 
 
-    public User(String tag, String nick, String email, String password) {
+    public User(String tag, String nick, String email, String password)  throws IllegalArgumentException{
         Validation.validateNickTagPassword(nick);
         Validation.validateNickTagPassword(tag);
         Validation.validateNickTagPassword(password);
@@ -59,13 +59,7 @@ public class User {
         links.put("instagram","");
         links.put("youtube","");
     }
-
-
-    public void setTrophies(ArrayList<String> trophies) {
-        this.trophies = trophies;
-    }
-
-    public User(String tag, String nick, String email, String password, ArrayList<String> categories) {
+    public User(String tag, String nick, String email, String password, ArrayList<String> categories) throws IllegalArgumentException {
         this(tag, nick, email, password);
         this.categories = categories;
     }
@@ -116,7 +110,7 @@ public class User {
         }
         return "";
     }
-    public static String addNewUser(String tag, String nick, String email, String password, ArrayList<String> categories){
+    public static String addNewUser(String tag, String nick, String email, String password, ArrayList<String> categories) throws IllegalArgumentException{
         Validation.validateNickTagPassword(nick);
         Validation.validateNickTagPassword(tag);
         Validation.validateNickTagPassword(password);
@@ -159,7 +153,6 @@ public class User {
         return "";
     }
 
-
     public void addChallengeToDone(Challenge challenge){
         done.add(challenge.getId());
     }
@@ -172,7 +165,6 @@ public class User {
     public void addAchievement(Trophy trophy){trophies.add(trophy.getId());};
 
 
-
     public ArrayList<Challenge> getDoneChallenges(){
         ArrayList<Challenge> challenges = new ArrayList<>();
         for (String s:done) {
@@ -180,6 +172,7 @@ public class User {
         }
         return challenges;
     }
+
     public ArrayList<Challenge> getUnDoneChallenges(){
         ArrayList<Challenge> challenges = new ArrayList<>();
         for (String s:undone) {
@@ -199,7 +192,6 @@ public class User {
         ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getCreator_id().equals(id)).collect(Collectors.toList());
         return a;
     }
-
     public ArrayList<Trophy> getAchievementsAsTrophies(){
         ArrayList<Trophy> trophies = new ArrayList<>();
         for (String s: this.trophies) {
@@ -207,7 +199,6 @@ public class User {
         }
         return trophies;
     }
-
 
     public ArrayList<User> getSubscriptionsAsUsers(){
         ArrayList<User> users = new ArrayList<>();
@@ -221,7 +212,6 @@ public class User {
        ArrayList<User> a = (ArrayList<User>) users.stream().filter(x->x.getSubscriptions().contains(id)).collect(Collectors.toList());
        return a;
     }
-
 
     public static ArrayList<User> getAllUsers(){
         try {
@@ -489,29 +479,29 @@ public class User {
     public ArrayList<String> getTrophies() {
         return trophies;
     }
-
-
-
-
-    private void setLinks(HashMap<String, String> links) {
-        this.links = links;
+    public int getRp() {
+        return rp;
     }
-    private void setId(String id){
-        this.id = id;
+    public int getTotalRp() {
+        return totalRp;
     }
-    public void setTag(String tag) {
+
+    public void setTrophies(ArrayList<String> trophies) {
+        this.trophies = trophies;
+    }
+    public void setTag(String tag)  throws IllegalArgumentException{
         Validation.validateNickTagPassword(tag);
         this.tag = tag;
     }
-    public void setNick(String nick) {
+    public void setNick(String nick) throws IllegalArgumentException{
         Validation.validateNickTagPassword(nick);
         this.nick = nick;
     }
-    public void setEmail(String email) {
+    public void setEmail(String email) throws IllegalArgumentException{
         Validation.validateEmail(email);
         this.email = email;
     }
-    public void setPassword(String password) {
+    public void setPassword(String password) throws IllegalArgumentException{
         Validation.validateNickTagPassword(password);
         this.password = password;
     }
@@ -539,28 +529,21 @@ public class User {
     public void setPhoto(File photo) {
         this.photo = photo;
     }
-    public void setSaved(ArrayList<String> saved) {
-        this.saved = saved;
-    }
-
-    public int getRp() {
-        return rp;
-    }
     public void setRp(int rp) {
         this.rp = rp;
     }
-    public int getTotalRp() {
-        return totalRp;
+    public void setSaved(ArrayList<String> saved) {
+        this.saved = saved;
     }
     public void setTotalRp(int totalRp) {
         this.totalRp = totalRp;
     }
 
-    public static void main(String[] args) {
-        Trophy trophy = Trophy.getTrophyById("-M8vdqsRpN7HvuZ8zbZw");
-        System.out.println(trophy.getId());
-        trophy.setName("ttt");
-        trophy.update();
-
+    private void setLinks(HashMap<String, String> links) {
+        this.links = links;
     }
+    private void setId(String id){
+        this.id = id;
+    }
+
 }

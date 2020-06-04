@@ -16,14 +16,19 @@ public class Challenge {
 
     private int likes;
     private int timesViewed;
-
     private int rewardRp;
-    private ArrayList<String> rewardTrophies;
 
+    private ArrayList<String> rewardTrophies;
     private ArrayList<String> tags;
     private ArrayList<String> categories;
 
-    public Challenge(String name, String task, String creator_id) {
+    public Challenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories) throws IllegalArgumentException {
+        this(name, task, creator_id);
+        Validation.validateTags(tags);
+        Validation.validateTags(categories);
+        this.tags = tags;
+        this.categories = categories; }
+    public Challenge(String name, String task, String creator_id) throws IllegalArgumentException{
         Validation.validateName(name);
         Validation.validateTask(task);
         this.name = name;
@@ -36,30 +41,6 @@ public class Challenge {
         rewardRp = 0;
         rewardTrophies = new ArrayList<>();
         id = null;
-    }
-    public Challenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories) {
-        this(name, task, creator_id);
-        Validation.validateTags(tags);
-        Validation.validateTags(categories);
-        this.tags = tags;
-        this.categories = categories;
-    }
-
-
-    public int getRewardRp() {
-        return rewardRp;
-    }
-
-    public void setRewardRp(int rewardRp) {
-        this.rewardRp = rewardRp;
-    }
-
-    public ArrayList<String> getRewardTrophies() {
-        return rewardTrophies;
-    }
-
-    public void setRewardTrophies(ArrayList<String> rewardTrophies) {
-        this.rewardTrophies = rewardTrophies;
     }
 
     public static String addNewChallenge(Challenge challenge){
@@ -96,7 +77,7 @@ public class Challenge {
         }
         return "";
     }
-    public static String addNewChallenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories){
+    public static String addNewChallenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories) throws IllegalArgumentException{
         Validation.validateTags(tags);
         Validation.validateTags(categories);
         OkHttpClient client = new OkHttpClient();
@@ -250,7 +231,6 @@ public class Challenge {
         ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getTags().contains(tag)).collect(Collectors.toList());
         return a;
     }
-
     public static ArrayList<Challenge> getAllWithCategories(ArrayList<String> categories){
         ArrayList<Challenge> challenges = Challenge.getAllChallenges();
         ArrayList<Challenge> a = (ArrayList<Challenge>) challenges.stream().filter(x->x.getCategories().containsAll(categories)).collect(Collectors.toList());
@@ -334,11 +314,20 @@ public class Challenge {
     public ArrayList<String> getCategories() {
         return categories;
     }
+    public int getRewardRp() {
+        return rewardRp;
+    }
+    public ArrayList<String> getRewardTrophies() {
+        return rewardTrophies;
+    }
 
-    public void setName(String name) {
+    public void setName(String name) throws IllegalArgumentException {
+        Validation.validateName(name);
+
         this.name = name;
     }
-    public void setTask(String task) {
+    public void setTask(String task) throws IllegalArgumentException{
+        Validation.validateTask(task);
         this.task = task;
     }
     public void setLikes(int likes) {
@@ -350,15 +339,23 @@ public class Challenge {
     public void setCreator_id(String creator_id) {
         this.creator_id = creator_id;
     }
-    public void setTags(ArrayList<String> tags) {
+    public void setTags(ArrayList<String> tags) throws IllegalArgumentException {
         Validation.validateTags(tags);
         this.tags = tags;
     }
-    public void setCategories(ArrayList<String> categories) {
+    public void setCategories(ArrayList<String> categories) throws IllegalArgumentException {
         Validation.validateTags(categories);
         this.categories = categories;
     }
+    public void setRewardRp(int rewardRp) {
+        this.rewardRp = rewardRp;
+    }
+    public void setRewardTrophies(ArrayList<String> rewardTrophies) {
+        this.rewardTrophies = rewardTrophies;
+    }
+
     private void setId(String id){
         this.id = id;
     }
+
 }

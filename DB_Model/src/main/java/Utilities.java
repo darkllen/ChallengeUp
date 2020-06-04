@@ -29,7 +29,6 @@ public class Utilities {
         }
         return null;
     }
-
     public static boolean addNewCategory(String category){
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -49,10 +48,6 @@ public class Utilities {
         } catch (JSONException | IOException e) {
             return false;
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(Challenge.getAllChallenges());
     }
 }
 

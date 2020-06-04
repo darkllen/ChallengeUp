@@ -11,11 +11,12 @@ public class Comment {
     private String message;
     private String user_id;
     private String challenge_id;
-    private int likes;
     private String date;
     private String reply_on_id;
 
-    public Comment(String message, String user_id, String challenge_id, String date) {
+    private int likes;
+
+    public Comment(String message, String user_id, String challenge_id, String date)  {
         this.message = message;
         this.user_id = user_id;
         this.challenge_id = challenge_id;
@@ -150,19 +151,19 @@ public class Comment {
 
 
 
-    public int getLikes() {
-        return likes;
-    }
-
     private void setId(String id) {
         this.id = id;
     }
+
     public void setLikes(int likes) {
         this.likes = likes;
     }
 
     public String getUser_id() {
         return user_id;
+    }
+    public int getLikes() {
+        return likes;
     }
     public String getChallenge_id() {
         return challenge_id;
