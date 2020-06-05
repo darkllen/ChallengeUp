@@ -39,15 +39,15 @@ private|BufferedImage|photo|user avatar, null by default|+|+
 **Constructors:** <br/>
 Constructor | Description
 -------------|-------------
-User(String tag, String nick, String email, String password) | create User, id == null until addNewUser(User user) is used, all arrayLists empty, rp and totalRp == 0, links have 3 keys and empty values, have validation (tag, nick, password, email and ckeck for tag to be unique)
-User(String tag, String nick, String email, String password, ArrayList of Strings categories) | create User, id == null until addNewUser(User user) is used, all arrayLists empty except categories, rp and totalRp == 0, links have 3 keys and empty values, have validation (tag, nick, password, email and ckeck for tag to be unique)
+User(String tag, String nick, String email, String password) | create User, id == null until addNewUser(User user) is used, all arrayLists empty, rp and totalRp == 0, links have 3 keys and empty values
+User(String tag, String nick, String email, String password, ArrayList of Strings categories) | create User, id == null until addNewUser(User user) is used, all arrayLists empty except categories, rp and totalRp == 0, links have 3 keys and empty values
   
 **Static methods:** <br/>
 
 Return|Return description|Method|Method Description
 -------------|-------------|-------------|-------------
-String|id of new User in db|addNewUser(User user)|add User to db with all of it parameters, change id of user to relevant
-String|id of new User in db|addNewUser(String tag, String nick, String email, String password, ArrayList of Strings categories)|creaate User in db, all other fields used as in user constructor, has validation, same as in constructor.
+String|id of new User in db|addNewUser(User user)|add User to db with all of it parameters, change id of user to relevant,has validation (tag, nick, password, email and ckeck for tag to be unique)
+String|id of new User in db|addNewUser(String tag, String nick, String email, String password, ArrayList of Strings categories)|creaate User in db, all other fields used as in user constructor, has validation
 ArrayList of Users|all users|getAllUsers()|get all users from db
 User|user with certain id or null if there is no user with id|getUserById(String id)|get User with id from db 
 
@@ -55,7 +55,7 @@ User|user with certain id or null if there is no user with id|getUserById(String
 
 Return|Return description|Method|Method Description
 -------------|-------------|-------------|-------------
-void||update()|rewrite User params in db with this object
+void||update()|rewrite User params in db with this object, have validation (tag, nick, password, email and ckeck for tag to be unique)
 ArrayList\<Challenge\>|all done challenges of this user|getDoneChallenges()|get all done challenges
 ArrayList\<Challenge\>|all undone challenges of this user|getUnDoneChallenges()|get all undone challenges
 ArrayList\<Challenge\>|all created challenges of this user|getAllCreatedChallenges()|get all created challenges
@@ -88,15 +88,15 @@ private|ArrayList\<String\>|rewardTrophies|ids of trophies that user get by comp
 
 Constructor | Description
 ----------|-------------
-Challenge(String name, String task, String creator_id)|create challenge, id == null, all arrayLists empty, likes, timesViewed and rewardRp == 0. Has name, task validation
-Challenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories)|create challenge, id == null, all arrayLists empty, likes, timesViewed and rewardRp == 0. Has name, task validation
-
+Challenge(String name, String task, String creator_id)|create challenge, id == null, all arrayLists empty, likes, timesViewed and rewardRp == 0. 
+Challenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories)|create challenge, id == null, all arrayLists empty, likes, timesViewed and rewardRp == 0.
+  
 **Static methods:** <br/>
 
 Return|Return description|Method|Method Description
 -------------|-------------|-------------|-------------
-String|id of new Challenge in db|addNewChallenge(Challenge challenge)|add Challenge to db with all of it parameters, change id of challenge to relevant
-String|id of new Challenge in db|addNewChallenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList\<String\> categories)|add Challenge to db with all of it parameters, change id of challenge to relevant, validation as in constructor
+String|id of new Challenge in db|addNewChallenge(Challenge challenge)|add Challenge to db with all of it parameters, change id of challenge to relevant, Has name, task validation
+String|id of new Challenge in db|addNewChallenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList\<String\> categories)|add Challenge to db with all of it parameters, change id of challenge to relevant. Has name, task validation
 ArrayList\<Challenge\>|all challenge|getAllChallenges()|get all challenges from db
 Challenge|challenge with certain id or null if there is no challenge with id|getChallengeById(String id)|get Challenge with id from db 
 ArrayList\<Challenge\>|all challenges with this category|getAllWithCategory(String category)|get all challenges with certain category
@@ -108,7 +108,7 @@ ArrayList\<Challenge\>|all challenges with these tags|getAllWithTags(ArrayList o
 
 Return|Return description|Method|Method Description
 -------------|-------------|-------------|-------------
-void||update()|rewrite Challenge params in db with this object
+void||update()|rewrite Challenge params in db with this object. Has name, task validation
 ArrayList\<Comment\>|all comments belong to this challenge| getAllComments()| get all comments of this challenge
 long|number of people who accept this challenge|numberOfPeopleWhoAccepted()|get number of people accepted challenge
 long|number of people who complete this challenge|numberOfPeopleWhoComplete()|get number of people completed challenge
@@ -124,7 +124,7 @@ private|String|message|comment text|+|-
 private|String|user_id|id of comment creator|+|-
 private|String|challenge_id|id of challenge, wich is commented|+|-
 private|int|likes|number og likes|+|+
-private|String|date|date of writing comments|+|-
+private|String|date|date of writing comments (store in db as string so choose any format you want)|+|-
 private|String|reply_on_id|id of comment, on which this comment is a reply, "" if it isn\`t a reply|+|-
 
 **Constructors:** <br/>
@@ -161,14 +161,14 @@ private|String|description|trophy description|+|+
 
 Constructor | Description
 -------------|-------------
-Trophy(String name, String description)| id is null untill object is added to db. has name, description validation
+Trophy(String name, String description)| id is null untill object is added to db. 
 
 **Static methods:** <br/>
 
 Return|Return description|Method|Method Description
 -------------|-------------|-------------|-------------
-String|id of new Trophy in db|addNewTrophy(Trophy trophy)add Trophy to db with all of it parameters, change id of trophy to relevant
-String|id of new Trophy in db|addNewTrophy(String name, String description)|creaate Trophy in db. validation as in constructor
+String|id of new Trophy in db|addNewTrophy(Trophy trophy)add Trophy to db with all of it parameters, change id of trophy to relevant. has name, description validation
+String|id of new Trophy in db|addNewTrophy(String name, String description)|creaate Trophy in db. has name, description validation
 ArrayList\<Trophy\>|all trophies|getAllTrophies()|get all trophies from db
 Trophy|trophy with certain id|getTrophyById(String id)|get trophy with id
 
