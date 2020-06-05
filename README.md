@@ -34,7 +34,7 @@ private|ArrayList\<String\>|done|ids of user\`s done challenges|+|+
 private|ArrayList\<String\>|saved|user\`s saved challenges|+|+
 private|ArrayList\<String\>|trophies|ids of user trophies|+|+
 private|HashMap\<String, String\>|links| links on other social networks (fb, insta, youtube)|-|+
-private|File|photo|user avatar, for now can be setted, but can\`t be got from bd|+|+ 
+private|BufferedImage|photo|user avatar, null by default|+|+ 
 
 **Constructors:** <br/>
 Constructor | Description
