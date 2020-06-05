@@ -150,6 +150,7 @@ public class Trophy {
         ArrayList<User> a = (ArrayList<User>) users.stream().filter(x->x.getTrophies().contains(id)).collect(Collectors.toList());
         return a;
     }
+
     public String getName() {
         return name;
     }

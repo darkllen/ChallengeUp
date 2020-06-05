@@ -3,8 +3,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,7 +32,7 @@ public class User {
 
     private HashMap<String, String> links;
 
-    private File photo;
+    private BufferedImage photo;
 
 
 
@@ -38,7 +41,6 @@ public class User {
         Validation.validateNickTagPassword(tag);
         Validation.validateNickTagPassword(password);
         Validation.validateEmail(email);
-        Validation.validateUserTagToBeUnique(tag);
         this.tag = tag;
         this.nick = nick;
         this.email = email;
@@ -66,6 +68,7 @@ public class User {
     }
 
     public static String addNewUser(User user){
+        Validation.validateUserTagToBeUnique(user.tag);
         OkHttpClient client = new OkHttpClient();
         try {
             JSONObject jsonObject = new JSONObject()
@@ -84,11 +87,14 @@ public class User {
                     .put("totalRp", user.totalRp);
 
 
+
             RequestBody requestBody;
             if (user.photo!=null){
+                File file = File.createTempFile("photo", null);
+                ImageIO.write(user.photo, "png", file);
                 requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("data", jsonObject.toString())
-                        .addFormDataPart("file", user.photo.getName(), RequestBody.create(MediaType.parse("image/png"), user.photo))
+                        .addFormDataPart("file", "photo", RequestBody.create(MediaType.parse("image/png"), file))
                         .build();
             }   else {
                 requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
@@ -224,7 +230,6 @@ public class User {
                     .build();
             Response response = client.newCall(request).execute();
             String resStr = response.body().string();
-
             JSONObject object = new JSONObject(resStr);
             object = new JSONObject(object.getString("users"));
 
@@ -296,6 +301,10 @@ public class User {
                 user.setTrophies(achievements);
                 user.setRp(Integer.parseInt(object.getJSONObject(key).getString("rp")));
                 user.setTotalRp(Integer.parseInt(object.getJSONObject(key).getString("totalRp")));
+                if(!object.getJSONObject(key).getString("photo_link").equals("")){
+                    BufferedImage image = ImageIO.read(new URL(object.getJSONObject(key).getString("photo_link")));
+                    user.setPhoto(image);
+                }
                 users.add(user);
             }
             return users;
@@ -314,7 +323,10 @@ public class User {
                     .build();
             Response response = client.newCall(request).execute();
             String resStr = response.body().string();
+
             JSONObject object = new JSONObject(resStr);
+
+
             object = new JSONObject(object.getString("user"));
 
             ArrayList<String> undoneArray = new ArrayList<>();
@@ -377,7 +389,10 @@ public class User {
                 user.setTrophies(achievements);
                 user.setRp(Integer.parseInt(object.getJSONObject(id).getString("rp")));
                 user.setTotalRp(Integer.parseInt(object.getJSONObject(id).getString("totalRp")));
-
+                if(!object.getJSONObject(id).getString("photo_link").equals("")){
+                    BufferedImage image = ImageIO.read(new URL(object.getJSONObject(id).getString("photo_link")));
+                    user.setPhoto(image);
+                }
             return user;
         } catch (IOException | JSONException e) {
             return null;
@@ -385,6 +400,7 @@ public class User {
     }
 
     public void update(){
+        Validation.validateUserTagToBeUnique(tag);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -407,9 +423,11 @@ public class User {
             //RequestBody body = RequestBody.create(jsonObject.toString(), JSON);
             RequestBody requestBody;
             if (photo!=null){
+                File file = File.createTempFile("photo", null);
+                ImageIO.write(photo, "png", file);
                 requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                         .addFormDataPart("data", jsonObject.toString())
-                        .addFormDataPart("file", photo.getName(), RequestBody.create(MediaType.parse("image/png"), photo))
+                        .addFormDataPart("file", "photo", RequestBody.create(MediaType.parse("image/png"), file))
                         .build();
             }   else {
                 requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
@@ -430,10 +448,6 @@ public class User {
             e.printStackTrace();
         }
     }
-
-
-
-
 
 
     public String getId() {
@@ -472,7 +486,7 @@ public class User {
     public String getYoutubeLink(){
         return links.get("youtube");
     }
-    public File getPhoto() {
+    public BufferedImage getPhoto() {
         return photo;
     }
     public ArrayList<String> getSaved() {
@@ -493,7 +507,6 @@ public class User {
     }
     public void setTag(String tag)  throws IllegalArgumentException{
         Validation.validateNickTagPassword(tag);
-        Validation.validateUserTagToBeUnique(tag);
         this.tag = tag;
     }
     public void setNick(String nick) throws IllegalArgumentException{
@@ -529,7 +542,7 @@ public class User {
     public void setYuotubeLink(String link){
         links.put("youtube", link);
     }
-    public void setPhoto(File photo) {
+    public void setPhoto(BufferedImage photo) {
         this.photo = photo;
     }
     public void setRp(int rp) {
