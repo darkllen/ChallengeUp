@@ -26,7 +26,7 @@ private|String|nick|user name|+|+
 private|String|email|user email|+|+
 private|String|password|user password|+|+
 private|int|rp|current user reputation|+|+
-private|it|totalRp|all user reputation|+|+
+private|int|totalRp|all user reputation|+|+
 private|ArrayList\<String\>|categories|favourite categories|+|+
 private|ArrayList\<String\>|subscriptions|ids of user\`s subscriptions|+|+
 private|ArrayList\<String\>|undone|ids of user\`s undone challenges|+|+
@@ -34,7 +34,7 @@ private|ArrayList\<String\>|done|ids of user\`s done challenges|+|+
 private|ArrayList\<String\>|saved|user\`s saved challenges|+|+
 private|ArrayList\<String\>|trophies|ids of user trophies|+|+
 private|HashMap\<String, String\>|links| links on other social networks (fb, insta, youtube)|-|+
-private|File|photo|user avatar, for now can be setted, but can\`t be got from bd|+|+ 
+private|BufferedImage|photo|user avatar, null by default|+|+ 
 
 **Constructors:** <br/>
 Constructor | Description
