@@ -36,11 +36,7 @@ public class User {
 
 
 
-    public User(String tag, String nick, String email, String password)  throws IllegalArgumentException{
-        Validation.validateNickTagPassword(nick);
-        Validation.validateNickTagPassword(tag);
-        Validation.validateNickTagPassword(password);
-        Validation.validateEmail(email);
+    public User(String tag, String nick, String email, String password)  {
         this.tag = tag;
         this.nick = nick;
         this.email = email;
@@ -62,13 +58,17 @@ public class User {
         links.put("instagram","");
         links.put("youtube","");
     }
-    public User(String tag, String nick, String email, String password, ArrayList<String> categories) throws IllegalArgumentException {
+    public User(String tag, String nick, String email, String password, ArrayList<String> categories) {
         this(tag, nick, email, password);
         this.categories = categories;
     }
 
-    public static String addNewUser(User user){
+    public static String addNewUser(User user) throws IllegalArgumentException{
         Validation.validateUserTagToBeUnique(user.tag);
+        Validation.validateNickTagPassword(user.nick);
+        Validation.validateNickTagPassword(user.tag);
+        Validation.validateNickTagPassword(user.password);
+        Validation.validateEmail(user.email);
         OkHttpClient client = new OkHttpClient();
         try {
             JSONObject jsonObject = new JSONObject()
@@ -399,7 +399,11 @@ public class User {
         }
     }
 
-    public void update(){
+    public void update() throws IllegalArgumentException{
+        Validation.validateNickTagPassword(nick);
+        Validation.validateNickTagPassword(tag);
+        Validation.validateNickTagPassword(password);
+        Validation.validateEmail(email);
         Validation.validateUserTagToBeUnique(tag);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -505,20 +509,20 @@ public class User {
     public void setTrophies(ArrayList<String> trophies) {
         this.trophies = trophies;
     }
-    public void setTag(String tag)  throws IllegalArgumentException{
-        Validation.validateNickTagPassword(tag);
+    public void setTag(String tag)  {
+
         this.tag = tag;
     }
-    public void setNick(String nick) throws IllegalArgumentException{
-        Validation.validateNickTagPassword(nick);
+    public void setNick(String nick) {
+
         this.nick = nick;
     }
-    public void setEmail(String email) throws IllegalArgumentException{
-        Validation.validateEmail(email);
+    public void setEmail(String email) {
+
         this.email = email;
     }
-    public void setPassword(String password) throws IllegalArgumentException{
-        Validation.validateNickTagPassword(password);
+    public void setPassword(String password) {
+
         this.password = password;
     }
     public void setUndone(ArrayList<String> undone) {

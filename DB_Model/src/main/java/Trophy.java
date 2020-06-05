@@ -12,15 +12,16 @@ public class Trophy {
     private String name;
     private String description;
 
-    public Trophy(String name, String description) throws IllegalArgumentException {
-        Validation.validateName(name);
-        Validation.validateDescription(description);
+    public Trophy(String name, String description)  {
+
         this.name = name;
         this.description = description;
         id = null;
     }
 
-    public static String addNewTrophy(Trophy trophy){
+    public static String addNewTrophy(Trophy trophy) throws IllegalArgumentException{
+        Validation.validateName(trophy.name);
+        Validation.validateDescription(trophy.description);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -123,7 +124,9 @@ public class Trophy {
         }
     }
 
-    public void update(){
+    public void update() throws IllegalArgumentException{
+        Validation.validateName(name);
+        Validation.validateDescription(description);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -161,12 +164,11 @@ public class Trophy {
         return id;
     }
 
-    public void setName(String name) throws IllegalArgumentException {
-        Validation.validateName(name);
+    public void setName(String name)  {
+
         this.name = name;
     }
-    public void setDescription(String description) throws IllegalArgumentException {
-        Validation.validateDescription(description);
+    public void setDescription(String description)  {
         this.description = description;
     }
 

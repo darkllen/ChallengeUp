@@ -22,15 +22,12 @@ public class Challenge {
     private ArrayList<String> tags;
     private ArrayList<String> categories;
 
-    public Challenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories) throws IllegalArgumentException {
+    public Challenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories)  {
         this(name, task, creator_id);
-        Validation.validateTags(tags);
-        Validation.validateTags(categories);
+
         this.tags = tags;
         this.categories = categories; }
-    public Challenge(String name, String task, String creator_id) throws IllegalArgumentException{
-        Validation.validateName(name);
-        Validation.validateTask(task);
+    public Challenge(String name, String task, String creator_id){
         this.name = name;
         this.task = task;
         this.creator_id = creator_id;
@@ -43,7 +40,11 @@ public class Challenge {
         id = null;
     }
 
-    public static String addNewChallenge(Challenge challenge){
+    public static String addNewChallenge(Challenge challenge) throws IllegalArgumentException{
+        Validation.validateTags(challenge.tags);
+        Validation.validateTags(challenge.categories);
+        Validation.validateName(challenge.name);
+        Validation.validateTask(challenge.task);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -80,6 +81,8 @@ public class Challenge {
     public static String addNewChallenge(String name, String task, String creator_id, ArrayList<String> tags, ArrayList<String> categories) throws IllegalArgumentException{
         Validation.validateTags(tags);
         Validation.validateTags(categories);
+        Validation.validateName(name);
+        Validation.validateTask(task);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -261,7 +264,11 @@ public class Challenge {
         return a;
     }
 
-    public void update(){
+    public void update() throws IllegalArgumentException{
+        Validation.validateTags(tags);
+        Validation.validateTags(categories);
+        Validation.validateName(name);
+        Validation.validateTask(task);
         OkHttpClient client = new OkHttpClient();
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         try {
@@ -321,13 +328,11 @@ public class Challenge {
         return rewardTrophies;
     }
 
-    public void setName(String name) throws IllegalArgumentException {
-        Validation.validateName(name);
-
+    public void setName(String name) {
         this.name = name;
     }
-    public void setTask(String task) throws IllegalArgumentException{
-        Validation.validateTask(task);
+    public void setTask(String task) {
+
         this.task = task;
     }
     public void setLikes(int likes) {
@@ -339,12 +344,12 @@ public class Challenge {
     public void setCreator_id(String creator_id) {
         this.creator_id = creator_id;
     }
-    public void setTags(ArrayList<String> tags) throws IllegalArgumentException {
-        Validation.validateTags(tags);
+    public void setTags(ArrayList<String> tags)  {
+
         this.tags = tags;
     }
-    public void setCategories(ArrayList<String> categories) throws IllegalArgumentException {
-        Validation.validateTags(categories);
+    public void setCategories(ArrayList<String> categories) {
+
         this.categories = categories;
     }
     public void setRewardRp(int rewardRp) {
