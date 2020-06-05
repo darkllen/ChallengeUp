@@ -26,7 +26,7 @@ private|String|nick|user name|+|+
 private|String|email|user email|+|+
 private|String|password|user password|+|+
 private|int|rp|current user reputation|+|+
-private|it|totalRp|all user reputation|+|+
+private|int|totalRp|all user reputation|+|+
 private|ArrayList\<String\>|categories|favourite categories|+|+
 private|ArrayList\<String\>|subscriptions|ids of user\`s subscriptions|+|+
 private|ArrayList\<String\>|undone|ids of user\`s undone challenges|+|+
